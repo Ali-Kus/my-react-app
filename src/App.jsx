@@ -3,6 +3,7 @@ import "./App.css";
 import { useCallback, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import IntroAnimation from "./components/IntroAnimation";
+import ProjectsSection from "./components/ProjectsSection";
 import logoSvg from "./assets/logo2.svg";
 
 const MotionDiv = motion.div;
@@ -11,15 +12,32 @@ const LogoSticker = ({ className }) => (
   <img src={logoSvg} alt="Ali Logo" className={className} />
 );
 
+// Un homme de valeur respecte le temps des autres : l'intro ne joue
+// qu'une fois par session. Refresh ou retour direct → site immédiat.
+const INTRO_SESSION_KEY = "introSeen";
+
+function readIntroSeen() {
+  try {
+    return window.sessionStorage.getItem(INTRO_SESSION_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
 function App() {
-  const [introDone, setIntroDone] = useState(false);
-  const [siteRevealed, setSiteRevealed] = useState(false);
+  const [introDone, setIntroDone] = useState(readIntroSeen);
+  const [siteRevealed, setSiteRevealed] = useState(readIntroSeen);
 
   const handleRevealSite = useCallback(() => {
     setSiteRevealed(true);
   }, []);
 
   const handleFinishIntro = useCallback(() => {
+    try {
+      window.sessionStorage.setItem(INTRO_SESSION_KEY, "1");
+    } catch {
+      /* sessionStorage indisponible — on continue */
+    }
     setIntroDone(true);
   }, []);
 
@@ -34,7 +52,7 @@ function App() {
       <MotionDiv
         initial={false}
         animate={{ opacity: siteRevealed ? 1 : 0 }}
-        transition={{ duration: 1.0, ease: [0.25, 0.1, 0.25, 1] }}
+        transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1] }}
         style={{
           visibility: siteRevealed ? "visible" : "hidden",
           pointerEvents: siteRevealed ? "auto" : "none",
@@ -45,151 +63,39 @@ function App() {
 
         {siteRevealed && (
           <>
-            {/* 7. BACKGROUND WATERMARK */}
+            {/* Watermark : signature très diluée, perçue à peine */}
             <LogoSticker className="logo-watermark" />
-
-            {/* 10. DIAGONAL CORNER BOTTOM-RIGHT */}
-            <LogoSticker className="logo-diagonal-corner" />
-
-            {/* 5. FLOATING BOTTOM LEFT (Sticky) */}
-            <LogoSticker className="logo-floating-left" />
 
             <main>
               <section id="home">
-                <h1>Développeur web</h1>
-                <p>
-                  Étudiant en BUT Informatique (2e année), parcours Développement d'applications à
-                  l'Université Grenoble Alpes – IUT2 Grenoble. Je développe des projets web
-                  concrets, côté front et back, avec une attention particulière à la qualité du
-                  code, à la logique produit et à l'expérience utilisateur.
+                <span className="section-number" aria-hidden="true">01</span>
+
+                <div className="status-pill">
+                  <span className="status-dot" aria-hidden="true" />
+                  <span>En recherche — alternance septembre 2026 - juillet 2027</span>
+                </div>
+
+                <h1 className="hero-name">Ali Kus</h1>
+                <p className="hero-role">
+                  Développeur web — Étudiant en BUT Informatique, IUT2 Grenoble
                 </p>
-                <p>
-                  J'ai consolidé mes compétences techniques et mon autonomie au fil du cursus,
-                  ce qui m'a permis de gagner en rigueur et en efficacité dans des contextes
-                  de projet réels.
-                </p>
-                <p>
-                  Je recherche un stage ou une première expérience professionnelle en
-                  développement logiciel / web.
+
+                <p className="hero-bio">
+                  Je conçois des projets web concrets, côté front et back, avec une attention
+                  particulière à la qualité du code, à la logique produit et à l'expérience
+                  utilisateur. Mon parcours au BUT m'a permis de gagner en rigueur, en autonomie
+                  et en efficacité dans des contextes de projet réels.
                 </p>
               </section>
 
-              {/* 4. ENTRE SECTIONS - SCROLLABLE */}
-              <div className="logo-between-sections">
-                <LogoSticker className="logo-between-sections-img" />
-              </div>
-
               <section id="projects">
+                <span className="section-number" aria-hidden="true">02</span>
                 <h2>Projets</h2>
-                <div className="projects">
-                  <article className="project">
-                    <h3>AidéO – Plateforme pour aidants familiaux</h3>
-                    <p className="project-type">Projet universitaire majeur (travail en équipe)</p>
-                    <p>
-                      AidéO est une plateforme web et mobile conçue pour faciliter la vie des aidants familiaux
-                      en leur offrant un accès simplifié à l'organisation, aux ressources et aux partenaires d'aide.
-                      Ce projet a un fort impact social et vise à apporter une solution concrète à un besoin réel.
-                    </p>
-                    <p className="project-subtitle">Fonctionnalités principales :</p>
-                    <ul>
-                      <li>Système d'authentification sécurisé</li>
-                      <li>Gestion de profils utilisateurs (aidants, partenaires, administrateurs)</li>
-                      <li>Cartographie interactive avec Leaflet pour localiser les services</li>
-                      <li>Gestion des rôles et permissions</li>
-                    </ul>
-                    <p className="project-tech">React, Tailwind CSS, Symfony, API REST, PostgreSQL, Leaflet</p>
-                    <p className="project-learning">
-                      Ce projet m'a permis de développer mes compétences en développement full-stack,
-                      en travail collaboratif et en conception orientée utilisateur.
-                    </p>
-                  </article>
-
-                  {/* 8. ENTRE PROJETS - SÉPARATEUR */}
-                  <div className="logo-project-separator">
-                    <LogoSticker className="logo-project-separator-img" />
-                  </div>
-
-                  <article className="project">
-                    <h3>Application de devis & facturation – SMA Auto</h3>
-                    <p className="project-type">Projet personnel / semi-professionnel</p>
-                    <p>
-                      Application de gestion de devis et factures développée pour une petite entreprise
-                      de carrosserie automobile. Ce projet répond à un besoin réel et a été conçu avec
-                      une orientation produit et un potentiel de commercialisation.
-                    </p>
-                    <p className="project-subtitle">Fonctionnalités principales :</p>
-                    <ul>
-                      <li>Gestion complète des clients et des véhicules</li>
-                      <li>Génération automatique de devis et factures au format PDF</li>
-                      <li>Numérotation automatique et archivage des documents</li>
-                      <li>Interface intuitive adaptée aux besoins métier</li>
-                    </ul>
-                    <p className="project-tech">Backend structuré, Base de données, Génération de PDF</p>
-                    <p className="project-learning">
-                      Ce projet illustre ma capacité à concevoir des solutions logicielles fonctionnelles
-                      et professionnelles, adaptées aux besoins d'un client réel.
-                    </p>
-                  </article>
-
-                  <article className="project">
-                    <h3>Portfolio personnel</h3>
-                    <p className="project-type">Projet personnel</p>
-                    <p>
-                      Développement de ce portfolio pour présenter mes projets, compétences et parcours.
-                      L'accent a été mis sur la clarté de l'interface, l'expérience utilisateur et la
-                      lisibilité du contenu.
-                    </p>
-                    <p className="project-tech">React, Vite</p>
-                  </article>
-
-                  <article className="project">
-                    <h3>Classification automatique de dépêches</h3>
-                    <p className="project-type">Projet académique – Implémentation d'un besoin client</p>
-                    <p>
-                      Développement d'un système de classification automatique de dépêches en plusieurs
-                      catégories en fonction du contenu textuel. Ce projet impliquait la comparaison de
-                      différentes approches algorithmiques afin d'optimiser la précision et les performances.
-                    </p>
-                    <p className="project-tech">Java</p>
-                    <p className="project-learning">
-                      Ce projet m'a permis d'approfondir mes connaissances en algorithmique et en
-                      traitement de données.
-                    </p>
-                  </article>
-
-                  <article className="project">
-                    <h3>Installation et configuration de services réseau</h3>
-                    <p className="project-type">Projet académique – Infrastructure et déploiement</p>
-                    <p>
-                      Installation et configuration complète d'un serveur Debian 12 équipé d'Apache,
-                      PostgreSQL et PHP. Ce projet m'a permis de comprendre les principes de l'administration
-                      système et du déploiement d'applications web.
-                    </p>
-                    <p className="project-tech">Shell, PHP, Apache, PostgreSQL, Debian 12</p>
-                    <p className="project-learning">
-                      Ce projet a renforcé ma compréhension des environnements de production et de la
-                      gestion d'infrastructures.
-                    </p>
-                  </article>
-
-                  <article className="project">
-                    <h3>Analyse de données Nutriscore</h3>
-                    <p className="project-type">Projet académique – Exploitation de base de données</p>
-                    <p>
-                      Création d'un rapport analytique en anglais basé sur l'exploitation d'une base de
-                      données contenant des informations sur les Nutriscores. Le projet incluait l'extraction,
-                      le traitement et la visualisation de données.
-                    </p>
-                    <p className="project-tech">SQL, R, Analyse de données</p>
-                    <p className="project-learning">
-                      Ce projet m'a permis de développer mes compétences en manipulation de bases de
-                      données et en analyse de données.
-                    </p>
-                  </article>
-                </div>
+                <ProjectsSection />
               </section>
 
               <section id="about">
+                <span className="section-number" aria-hidden="true">03</span>
                 <h2>À propos</h2>
                 <p>
                   Profil orienté développement web (front + back), projets concrets et
@@ -216,12 +122,71 @@ function App() {
               </section>
 
               <section id="contact">
-                {/* 9. CONTACT SECTION */}
-                <LogoSticker className="logo-contact" />
-
+                <span className="section-number" aria-hidden="true">04</span>
                 <h2>Contact</h2>
-                <p>ali.kus@outlook.fr</p>
-                <p>Email, LinkedIn, GitHub.</p>
+                <p className="contact-intro">
+                  Disponible pour un stage ou un échange. Le moyen le plus rapide reste l'email.
+                </p>
+
+                <div className="contact-grid">
+                  <a
+                    className="contact-card"
+                    href="mailto:ali.kus@outlook.fr"
+                    aria-label="Envoyer un email à Ali Kus"
+                  >
+                    <svg className="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <rect x="3" y="5" width="18" height="14" rx="2" />
+                      <path d="m3 7 9 6 9-6" />
+                    </svg>
+                    <span className="contact-label">Email</span>
+                    <span className="contact-value">ali.kus@outlook.fr</span>
+                  </a>
+
+                  <a
+                    className="contact-card"
+                    href="https://www.linkedin.com/in/ali-kus-fr/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Profil LinkedIn d'Ali Kus"
+                  >
+                    <svg className="contact-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                      <path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.13 1.45-2.13 2.94v5.67H9.36V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z" />
+                    </svg>
+                    <span className="contact-label">LinkedIn</span>
+                    <span className="contact-value">ali-kus-fr</span>
+                  </a>
+
+                  <a
+                    className="contact-card"
+                    href="https://github.com/ali-kus"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Profil GitHub d'Ali Kus"
+                  >
+                    <svg className="contact-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                      <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56v-2c-3.2.7-3.87-1.36-3.87-1.36-.52-1.32-1.27-1.67-1.27-1.67-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.02 1.75 2.68 1.25 3.34.95.1-.74.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.46.11-3.05 0 0 .96-.31 3.15 1.18a10.98 10.98 0 0 1 5.74 0c2.19-1.49 3.15-1.18 3.15-1.18.62 1.59.23 2.76.11 3.05.74.81 1.18 1.84 1.18 3.1 0 4.43-2.69 5.41-5.26 5.69.41.36.78 1.06.78 2.13v3.16c0 .31.21.66.79.55C20.21 21.39 23.5 17.08 23.5 12 23.5 5.65 18.35.5 12 .5z" />
+                    </svg>
+                    <span className="contact-label">GitHub</span>
+                    <span className="contact-value">@ali-kus</span>
+                  </a>
+
+                  <a
+                    className="contact-card"
+                    href="/cv-ali-kus.pdf"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Télécharger le CV d'Ali Kus en PDF"
+                  >
+                    <svg className="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" />
+                      <path d="M14 3v5h5" />
+                      <path d="M12 12v6" />
+                      <path d="m9 15 3 3 3-3" />
+                    </svg>
+                    <span className="contact-label">CV</span>
+                    <span className="contact-value">Télécharger PDF</span>
+                  </a>
+                </div>
               </section>
 
               {/* 2. FOOTER */}

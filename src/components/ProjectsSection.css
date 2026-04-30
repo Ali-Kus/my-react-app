@@ -1,0 +1,452 @@
+/* ============================================================
+   Projects — grille synthèse + modal cinématique.
+   ============================================================ */
+
+.section-intro {
+  max-width: 640px;
+  margin: 0 0 40px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1.05rem;
+}
+
+/* ----- Carrousel projets ----------------------------------- */
+.project-carousel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.carousel-stage {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  /* Hauteur stable pour éviter les sauts entre projets */
+  min-height: 460px;
+  display: flex;
+  align-items: stretch;
+}
+
+.carousel-card-wrapper {
+  width: 100%;
+  display: flex;
+}
+
+.carousel-nav {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.78);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+}
+
+.carousel-nav:hover {
+  background: rgba(255, 68, 68, 0.12);
+  border-color: rgba(255, 68, 68, 0.45);
+  color: #fff;
+  transform: scale(1.05);
+}
+
+.carousel-nav:focus-visible {
+  outline: 2px solid rgba(255, 68, 68, 0.6);
+  outline-offset: 2px;
+}
+
+.project-card {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  overflow: hidden;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+  transition: transform 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+  position: relative;
+}
+
+.project-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255, 68, 68, 0.32);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.32);
+}
+
+.project-card:focus-visible {
+  outline: 2px solid rgba(255, 68, 68, 0.6);
+  outline-offset: 2px;
+}
+
+/* ----- Dots avec progression -------------------------------- */
+.carousel-dots {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 28px 0 0;
+}
+
+.carousel-dot {
+  position: relative;
+  width: 36px;
+  height: 4px;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  cursor: pointer;
+  overflow: hidden;
+  transition: background 0.25s ease;
+}
+
+.carousel-dot:hover {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.carousel-dot:focus-visible {
+  outline: 2px solid rgba(255, 68, 68, 0.6);
+  outline-offset: 3px;
+}
+
+.carousel-dot.active {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.carousel-dot-fill {
+  position: absolute;
+  inset: 0;
+  width: 0%;
+  background: rgba(255, 68, 68, 0.85);
+  border-radius: 999px;
+}
+
+.carousel-dot.active .carousel-dot-fill {
+  animation-name: carouselDotFill;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+@keyframes carouselDotFill {
+  from { width: 0%; }
+  to { width: 100%; }
+}
+
+.project-card-body {
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.project-card .project-type {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(255, 68, 68, 0.85);
+  margin: 0;
+}
+
+.project-card h3 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: -0.01em;
+}
+
+.project-tagline {
+  margin: 0;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.65);
+  line-height: 1.5;
+}
+
+.project-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+/* ----- Tags stack ------------------------------------------ */
+.stack-tag-sm,
+.stack-tag {
+  display: inline-block;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  color: rgba(255, 255, 255, 0.78);
+  white-space: nowrap;
+}
+
+.stack-tag-sm {
+  padding: 4px 10px;
+  font-size: 0.7rem;
+}
+
+.stack-tag {
+  padding: 6px 14px;
+  font-size: 0.78rem;
+}
+
+/* ----- Cover artistique (placeholder en attendant les SS) -- */
+.project-cover {
+  aspect-ratio: 16 / 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Highlight chaud en haut à gauche : effet "lumière de studio" */
+.project-cover::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(120% 100% at 25% 20%, rgba(255, 255, 255, 0.18) 0%, transparent 60%);
+}
+
+/* Ombre en bas à droite : ancre la composition */
+.project-cover::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(80% 80% at 80% 100%, rgba(0, 0, 0, 0.4) 0%, transparent 60%);
+}
+
+.project-cover-initials {
+  position: relative;
+  z-index: 1;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: clamp(2.2rem, 6vw, 3.6rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  color: rgba(255, 255, 255, 0.92);
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.35);
+}
+
+.project-cover-lg {
+  aspect-ratio: 16 / 8;
+}
+
+.project-cover-lg .project-cover-initials {
+  font-size: clamp(3rem, 8vw, 5rem);
+}
+
+/* ----- Modal détail ---------------------------------------- */
+.project-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(8, 7, 10, 0.72);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  z-index: 1000;
+  padding: 32px 16px;
+  overflow-y: auto;
+}
+
+.project-modal {
+  position: relative;
+  width: 100%;
+  max-width: 760px;
+  background: linear-gradient(180deg, rgba(20, 18, 24, 0.96), rgba(12, 10, 16, 0.99));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 22px;
+  overflow: hidden;
+  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.55);
+  margin: auto;
+}
+
+.project-modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.5);
+  color: rgba(255, 255, 255, 0.85);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: background 0.25s ease, color 0.25s ease, transform 0.25s ease;
+}
+
+.project-modal-close:hover {
+  background: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  transform: rotate(90deg);
+}
+
+.project-modal-close:focus-visible {
+  outline: 2px solid rgba(255, 68, 68, 0.6);
+  outline-offset: 2px;
+}
+
+.project-modal-content {
+  padding: 32px;
+}
+
+.project-modal-content .project-type {
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(255, 68, 68, 0.9);
+  margin: 0 0 8px;
+}
+
+.project-modal-content h3 {
+  margin: 0 0 4px;
+  font-size: clamp(1.5rem, 3.5vw, 2rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #fff;
+}
+
+.project-subtitle-text {
+  margin: 0 0 24px;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 1rem;
+}
+
+/* Bandeau "Mon rôle" : preuve de spécificité, important quand on bosse en équipe */
+.project-role-strip {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 18px;
+  background: rgba(255, 68, 68, 0.06);
+  border-left: 2px solid rgba(255, 68, 68, 0.5);
+  border-radius: 4px;
+  margin: 0 0 24px;
+}
+
+.project-role-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(255, 68, 68, 0.9);
+}
+
+.project-role-value {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.94);
+}
+
+.project-modal-content p {
+  color: rgba(255, 255, 255, 0.76);
+  line-height: 1.65;
+  margin: 0 0 16px;
+}
+
+.project-modal-content .project-subtitle {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.92);
+  margin: 24px 0 10px;
+}
+
+.project-modal-content ul {
+  margin: 0 0 20px;
+  padding-left: 20px;
+  list-style: none;
+}
+
+.project-modal-content ul li {
+  position: relative;
+  padding-left: 16px;
+  margin-bottom: 8px;
+  color: rgba(255, 255, 255, 0.74);
+  line-height: 1.6;
+}
+
+.project-modal-content ul li::before {
+  content: '›';
+  position: absolute;
+  left: 0;
+  color: rgba(255, 68, 68, 0.85);
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
+.project-stack-modal {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 4px 0 24px;
+}
+
+.project-modal-content .project-learning {
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.7);
+  border-left: 2px solid rgba(255, 68, 68, 0.5);
+  padding: 4px 0 4px 14px;
+  margin: 24px 0 0;
+  font-size: 0.95rem;
+}
+
+.project-link {
+  display: inline-block;
+  margin-top: 24px;
+  padding: 10px 22px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  color: #fff;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: background 0.25s ease, transform 0.25s ease;
+}
+
+.project-link:hover {
+  background: rgba(255, 68, 68, 0.15);
+  transform: translateX(4px);
+}
+
+@media (max-width: 768px) {
+  .project-carousel {
+    gap: 8px;
+  }
+
+  .carousel-nav {
+    width: 38px;
+    height: 38px;
+  }
+
+  .carousel-stage {
+    min-height: 440px;
+  }
+
+  .project-modal-content {
+    padding: 24px 20px;
+  }
+
+  .project-modal-backdrop {
+    padding: 16px 12px;
+  }
+}
