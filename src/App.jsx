@@ -4,6 +4,7 @@ import { useCallback, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import IntroAnimation from "./components/IntroAnimation";
 import ProjectsSection from "./components/ProjectsSection";
+import CursorFx from "./components/CursorFx";
 import logoSvg from "./assets/logo2.svg";
 
 const MotionDiv = motion.div;
@@ -63,6 +64,9 @@ function App() {
 
         {siteRevealed && (
           <>
+            {/* Présence curseur — humble par défaut, lit comme une vibe ambiante */}
+            <CursorFx />
+
             {/* Watermark : signature très diluée, perçue à peine */}
             <LogoSticker className="logo-watermark" />
 
