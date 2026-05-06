@@ -31,11 +31,11 @@
      est peint dans son background. Hors halo curseur, transparent. */
   color: transparent;
   background-image: radial-gradient(
-    circle 220px at var(--tx) var(--ty),
+    circle 400px at var(--tx) var(--ty),
     rgba(255, 240, 200, 0.95) 0%,
-    rgba(248, 220, 150, 0.7) 22%,
-    rgba(220, 180, 100, 0.32) 50%,
-    rgba(180, 140, 80, 0.08) 75%,
+    rgba(248, 220, 150, 0.78) 18%,
+    rgba(220, 180, 100, 0.32) 45%,
+    rgba(180, 140, 80, 0.06) 72%,
     transparent 100%
   );
   background-clip: text;
