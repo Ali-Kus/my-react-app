@@ -177,49 +177,47 @@ p {
 }
 
 /* ============================================================
-   SIGNATURE — "Ali Kus" comme un trésor caché.
-   Hover → l'or se révèle, le texte respire. Pas avant.
-   On ajoute aussi un voile lumineux qui s'étire à droite du nom :
-   gradient directionnel (énergie qui sort du texte vers la suite du flux).
+   SIGNATURE — "Ali Kus" : la couleur de base ne change jamais.
+   Une couche ::after dessine la même chaîne par-dessus, peinte
+   par un radial-gradient or ancré sur le curseur (--cx / --cy
+   mis à jour en JS, en coordonnées locales à l'élément).
+   Hors du faisceau → ::after transparent → texte d'origine visible.
+   Dans le faisceau → or sur or, comme un trésor sous la lampe.
    ============================================================ */
 .signature-name {
   position: relative;
+  display: inline-block;
   cursor: pointer;
-  /* La couleur par défaut hérite du parent (h1 gradient blanc/gris,
-     ou couleur normale dans un paragraphe). Aucun changement visible
-     tant que la souris n'est pas dessus. */
-  transition: filter 0.6s cubic-bezier(0.22, 1, 0.36, 1),
-    text-shadow 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  /* Aucune transformation de la couleur de base : la valeur héritée
+     (gradient h1, blanc des contact-value, etc.) reste intacte. */
 }
 
-.signature-name:hover {
-  background: linear-gradient(
-    135deg,
-    #f7d56a 0%,
-    #e0a93b 30%,
-    #c9893a 50%,
-    #e0a93b 70%,
-    #f7d56a 100%
+.signature-name::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  /* Même typo que le parent — le double doit s'aligner au pixel près */
+  font: inherit;
+  letter-spacing: inherit;
+  color: transparent;
+  background-image: radial-gradient(
+circle 20px at var(--cx, -9999px) var(--cy, -9999px),
+    rgba(0, 31, 125, 1) 0%,
+    rgba(8, 42, 149, 0.95) 22%,
+    rgba(31, 86, 196, 0.7) 45%,
+    rgba(54, 118, 197, 0.25) 70%,
+    transparent 95%
   );
-  background-size: 200% 100%;
-  animation: signatureShimmer 3.2s ease-in-out infinite;
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  color: transparent;
-  filter: drop-shadow(0 0 14px rgba(247, 213, 106, 0.45));
+  /* Halo très doux autour des lettres or — ne s'allume qu'où le texte est opaque */
+  filter: drop-shadow(0 0 10px rgba(247, 213, 106, 0.35));
 }
 
-@keyframes signatureShimmer {
-  0%, 100% { background-position: 0% 50%; }
-  50%      { background-position: 100% 50%; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .signature-name:hover {
-    animation: none;
-  }
-}
+/* Cas particulier : si le parent a déjà background-clip: text (h1 gradient),
+   le ::after partage la même position de référence. Aucune surcharge nécessaire. */
 
 /* ============================================
    SECTION NUMBERS — typo géante, creuse, éditoriale
@@ -369,8 +367,13 @@ body.in-finale .finale-vignette {
 /* Contact Section */
 #contact {
   text-align: center;
-  /* Top resserré : on évite l'écho de la section #about quand on arrive */
-  padding: 56px 24px 96px;
+  /* Même respiration verticale qu'entre #home et #projects (80px haut/bas) */
+  padding: 140px 204px;
+  /* Décale le centre de snap vers le bas en étendant la "zone snap" de
+     ~220px (≈ hauteur du footer). Avec scroll-snap-align: center, ce centre
+     élargi se cale au milieu du viewport → #contact remonte d'autant et
+     le footer devient pleinement visible juste en dessous. */
+  scroll-margin-bottom: 220px;
 }
 
 /* Pendant le finale, le bloc cartes prend une présence supplémentaire :
@@ -513,9 +516,8 @@ body.in-finale #contact .contact-grid {
   position: relative;
   /* Le TechBackdrop déborde en largeur (texte nowrap > viewport) — on coupe net */
   overflow: hidden;
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
-  scroll-margin-top: 96px;
+  /* Pas de snap propre : on l'inclut déjà dans la zone-snap de #contact
+     (via scroll-margin-bottom) → le footer apparaît au même arrêt. */
 }
 
 /* Logo + copyright restent au-dessus de la pile technique cachée */

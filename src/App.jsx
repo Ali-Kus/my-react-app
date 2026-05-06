@@ -12,10 +12,21 @@ const MotionDiv = motion.div;
 const MotionA = motion.a;
 
 // Micro-composant : "Ali Kus" écrit comme une signature.
-// Hover → l'or se révèle, comme un trésor caché dans le texte.
-const Signature = ({ children, className = "" }) => (
-  <span className={`signature-name ${className}`.trim()}>{children}</span>
-);
+// Le texte garde sa couleur normale partout — sauf dans le faisceau
+// du curseur, où une couche superposée (::after) affiche l'or via
+// background-clip: text + radial-gradient piloté par --cx/--cy.
+// Le texte est dupliqué dans data-text pour le pseudo-élément.
+const Signature = ({ children, className = "" }) => {
+  const text = typeof children === "string" ? children : undefined;
+  return (
+    <span
+      className={`signature-name ${className}`.trim()}
+      data-text={text}
+    >
+      {children}
+    </span>
+  );
+};
 
 // Stagger d'entrée pour les cartes contact : peak-end rule, on travaille le finale.
 const finaleContainerVariants = {

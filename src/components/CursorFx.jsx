@@ -78,6 +78,16 @@ export default function CursorFx() {
       if (haloRef.current) {
         haloRef.current.style.transform = `translate3d(${s.hx}px, ${s.hy}px, 0) translate(-50%, -50%)`;
       }
+      // "Faisceau or" : projette la position du curseur en coordonnées locales
+      // sur chaque <span class="signature-name">. Le ::after correspondant peint
+      // l'or via background-clip: text et un radial-gradient anchored sur --cx/--cy.
+      // querySelectorAll par frame est OK ici (≤ 5 nœuds).
+      const sigs = document.getElementsByClassName("signature-name");
+      for (let i = 0; i < sigs.length; i++) {
+        const r = sigs[i].getBoundingClientRect();
+        sigs[i].style.setProperty("--cx", `${s.tx - r.left}px`);
+        sigs[i].style.setProperty("--cy", `${s.ty - r.top}px`);
+      }
       raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
