@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
+import ProjectStory from "./ProjectStory";
 import "./ProjectsSection.css";
 
 // Six projets, des plus récents/à enjeu aux plus académiques.
@@ -47,6 +48,38 @@ const PROJECTS = [
     learning:
       "Conception de solutions logicielles fonctionnelles et professionnelles, adaptées aux besoins d'un client réel.",
     github: null,
+    // Story interactive — séquence d'écrans + hotspots transparents.
+    // Drop tes captures dans : public/projects/sma-auto/01.jpg, 02.jpg…
+    // Coordonnées des hotspots en % de l'image (suivent le redimensionnement).
+    // target = index de la frame suivante. Édite/ajoute des frames librement.
+    story: {
+      folder: "sma-auto",
+      frames: [
+        {
+          src: "01.jpg",
+          alt: "Tableau de bord",
+          hotspots: [
+            { x: 6, y: 18, w: 18, h: 7, target: 1, label: "Nouveau devis" },
+            // Ajoute d'autres zones ici quand tu as la capture sous les yeux
+          ],
+        },
+        {
+          src: "02.jpg",
+          alt: "Création d'un devis",
+          hotspots: [
+            { x: 6, y: 6, w: 6, h: 5, target: 0, label: "Retour" },
+            { x: 78, y: 90, w: 18, h: 7, target: 2, label: "Valider" },
+          ],
+        },
+        {
+          src: "03.jpg",
+          alt: "Devis généré",
+          hotspots: [
+            { x: 6, y: 6, w: 6, h: 5, target: 0, label: "Retour à l'accueil" },
+          ],
+        },
+      ],
+    },
   },
   {
     id: "portfolio",
