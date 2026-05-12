@@ -412,11 +412,22 @@ export default function ProjectsSection() {
       </div>
 
       <AnimatePresence>
-        {openProject && (
-          <ProjectModal
+        {openProject && openProject.story ? (
+          // Démo interactive (séquence d'images + hotspots) si le projet
+          // déclare une `story`. Sinon → modal classique.
+          <ProjectStory
+            key={`story-${openProject.id}`}
             project={openProject}
             onClose={() => setOpenProject(null)}
           />
+        ) : (
+          openProject && (
+            <ProjectModal
+              key={`modal-${openProject.id}`}
+              project={openProject}
+              onClose={() => setOpenProject(null)}
+            />
+          )
         )}
       </AnimatePresence>
     </>

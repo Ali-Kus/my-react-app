@@ -256,15 +256,58 @@
 
 @media (max-width: 768px) {
   .project-story-bar {
-    padding: 14px 16px;
+    padding: 12px 14px;
+    gap: 8px;
+  }
+  .project-story-title {
+    font-size: 0.95rem;
+    /* Coupe propre si trop long, sans déborder */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 50vw;
+  }
+  .project-story-toggle {
+    height: 32px;
+    padding: 0 10px;
+    font-size: 0.72rem;
+  }
+  .project-story-close {
+    width: 32px;
+    height: 32px;
   }
   .project-story-stage {
-    padding: 12px 12px;
+    padding: 10px 8px;
   }
   .project-story-image {
-    max-height: calc(100vh - 200px);
+    max-width: 96vw;
+    max-height: calc(100dvh - 190px);
   }
   .project-story-foot {
-    padding: 10px 12px 14px;
+    padding: 10px 8px 14px;
+    gap: 12px;
+  }
+  .project-story-step {
+    width: 36px;
+    height: 36px;
+  }
+  .project-story-dot {
+    width: 22px;
+  }
+  .project-story-dot.is-active {
+    width: 32px;
+  }
+}
+
+@media (max-width: 380px) {
+  .project-story-bar {
+    /* Sur micro-écrans on cache le bouton "Zones" (raccourci 'h' reste dispo
+       en debug interne — usage rare sur mobile de toute façon) */
+  }
+  .project-story-toggle {
+    display: none;
+  }
+  .project-story-title {
+    max-width: 60vw;
   }
 }

@@ -430,16 +430,42 @@
 
 @media (max-width: 768px) {
   .project-carousel {
-    gap: 8px;
+    gap: 6px;
   }
 
   .carousel-nav {
-    width: 38px;
-    height: 38px;
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
   }
 
+  /* On laisse le contenu dicter la hauteur sur mobile au lieu d'un min-height
+     rigide. Évite les viewports d'iPhone SE qui n'arrivaient pas à contenir
+     la carte + le hero + la nav dans 667px de haut. */
   .carousel-stage {
-    min-height: 440px;
+    min-height: 0;
+  }
+
+  /* Cover d'image rétrécie pour libérer de la hauteur */
+  .project-card .project-cover {
+    aspect-ratio: 16 / 9;
+  }
+
+  .project-card-body {
+    padding: 18px;
+    gap: 6px;
+  }
+
+  .project-card-body h3 {
+    font-size: 1.05rem;
+  }
+
+  .project-tagline {
+    font-size: 0.85rem;
+  }
+
+  .carousel-dots {
+    margin-top: 18px;
   }
 
   .project-modal-content {

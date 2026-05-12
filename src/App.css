@@ -600,11 +600,32 @@ body.in-finale #contact .contact-grid {
     padding: 60px 20px;
   }
 
-  h1 {
-    font-size: 2.5rem;
+  /* h1 / h2 utilisent déjà clamp() — pas besoin de forcer une valeur fixe. */
+
+  /* Bandes de fade plus discrètes sur mobile : 188px mangerait 25% de l'écran */
+  .edge-fade-top {
+    height: 72px;
+  }
+  .edge-fade-bottom {
+    height: 28px;
   }
 
-  h2 {
-    font-size: 1.8rem;
+  /* Status pill peut wrapper plutôt que déborder horizontalement */
+  .status-pill {
+    flex-wrap: wrap;
+    text-align: left;
+  }
+
+  /* Contact : on resserre encore les paddings et on garde 2 colonnes */
+  #contact {
+    padding: 60px 20px;
+  }
+}
+
+/* Très petits viewports — phones <= 380px de large */
+@media (max-width: 380px) {
+  .status-pill {
+    font-size: 0.75rem;
+    padding: 6px 14px;
   }
 }

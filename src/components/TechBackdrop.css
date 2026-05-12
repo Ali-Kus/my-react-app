@@ -55,3 +55,12 @@
     transition: none;
   }
 }
+
+/* Mobile : on désactive carrément le backdrop. Sans curseur fin, l'effet
+   "trésor sous la lampe" ne se voit pas, et garder le DOM ne sert qu'à
+   alourdir le footer pour rien. */
+@media (max-width: 768px), (pointer: coarse) {
+  .tech-backdrop {
+    display: none;
+  }
+}
