@@ -1,5 +1,5 @@
 import { AnimatePresence, animate, motion } from "framer-motion";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import logo2 from "../assets/logo2.svg";
 import "./IntroAnimation.css";
@@ -46,10 +46,25 @@ export default function IntroAnimation({ onFinish, onRevealSite }) {
   const [lineOpacity, setLineOpacity] = useState(1);
   const [scene, setScene] = useState("typing");
   const [flyTo, setFlyTo] = useState({ x: 0, y: 0, scale: 1 });
+  const [skipped, setSkipped] = useState(false);
 
-  const textVisible = scene === "typing";
-  const glowVisible = scene === "reveal";
-  const showLogo = scene !== "typing";
+  // Ref de cancellation lisible depuis l'extérieur du useEffect : permet au
+  // bouton "Passer l'intro" d'interrompre la séquence async en cours.
+  const cancelRef = useRef({ cancelled: false });
+  const finishedRef = useRef(false);
+
+  const handleSkip = useCallback(() => {
+    if (finishedRef.current) return;
+    finishedRef.current = true;
+    cancelRef.current.cancelled = true;
+    setSkipped(true);
+    onRevealSite?.();
+    onFinish?.();
+  }, [onFinish, onRevealSite]);
+
+  const textVisible = scene === "typing" && !skipped;
+  const glowVisible = scene === "reveal" && !skipped;
+  const showLogo = scene !== "typing" && !skipped;
   const isFlying = scene === "fly";
 
   const overlayTransition = useMemo(
@@ -88,51 +103,55 @@ export default function IntroAnimation({ onFinish, onRevealSite }) {
     window.addEventListener("wheel", preventScroll, { passive: false });
     window.addEventListener("touchmove", preventScroll, { passive: false });
 
-    let cancelled = false;
+    // Capture local pour que la cleanup function utilise la même référence
+    // (évite le warning react-hooks/exhaustive-deps sur les refs).
+    const cancelToken = cancelRef.current;
+    cancelToken.cancelled = false;
     const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+    const isCancelled = () => cancelToken.cancelled;
 
     const run = async () => {
       setScene("typing");
 
       // Phase 1 : chaque ligne est typée puis tenue, puis fondue avant la suivante.
       for (let li = 0; li < SCRIPT.length; li += 1) {
-        if (cancelled) return;
+        if (isCancelled()) return;
         setLineIndex(li);
         setTyped("");
         setLineOpacity(1);
 
         // Petit temps avant que la ligne commence : le regard se pose.
         await sleep(li === 0 ? 700 : 280);
-        if (cancelled) return;
+        if (isCancelled()) return;
 
         const { text, holdAfterMs } = SCRIPT[li];
         let prev = "";
         for (let i = 0; i < text.length; i += 1) {
-          if (cancelled) return;
+          if (isCancelled()) return;
           await sleep(characterDelay(text[i], prev));
-          if (cancelled) return;
+          if (isCancelled()) return;
           setTyped(text.slice(0, i + 1));
           prev = text[i];
         }
 
         // Tenue : la phrase reste à l'écran le temps qu'elle existe.
         await sleep(holdAfterMs);
-        if (cancelled) return;
+        if (isCancelled()) return;
 
         // Fondu sortant avant la ligne suivante (ou avant le logo).
         setLineOpacity(0);
         await sleep(750);
       }
-      if (cancelled) return;
+      if (isCancelled()) return;
 
       // Phase 2 : le logo émerge de l'ombre, la lumière chaude se construit.
       setScene("reveal");
       await animate(0, 1, { duration: 1.4, ease: [0.22, 1, 0.36, 1] }).finished;
-      if (cancelled) return;
+      if (isCancelled()) return;
 
       // Phase 3 : on tient le logo. Le silence est volontaire.
       await sleep(2200);
-      if (cancelled) return;
+      if (isCancelled()) return;
 
       // Phase 4 : on dévoile le site, on mesure la cible navbar, puis on vole.
       onRevealSite?.();
@@ -159,15 +178,16 @@ export default function IntroAnimation({ onFinish, onRevealSite }) {
 
       setScene("fly");
       await animate(0, 1, { duration: 1.6, ease: [0.22, 1, 0.36, 1] }).finished;
-      if (cancelled) return;
+      if (isCancelled()) return;
 
+      finishedRef.current = true;
       onFinish?.();
     };
 
     run();
 
     return () => {
-      cancelled = true;
+      cancelToken.cancelled = true;
       window.removeEventListener("wheel", preventScroll);
       window.removeEventListener("touchmove", preventScroll);
       html.style.overflow = previous.htmlOverflow;
@@ -192,6 +212,23 @@ export default function IntroAnimation({ onFinish, onRevealSite }) {
     >
       {/* Vignette cinéma : assombrit les bords pour cadrer le regard */}
       <div className="introVignette" aria-hidden />
+
+      {/* Bouton "Passer l'intro" — discret en bas à droite, accessible clavier.
+          Cliquer interrompt la séquence async et fait apparaître le site direct. */}
+      {!skipped && (
+        <button
+          type="button"
+          className="introSkip"
+          onClick={handleSkip}
+          aria-label="Passer l'intro"
+        >
+          <span>Passer l'intro</span>
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M5 4l8 8-8 8" />
+            <path d="M14 4l5 8-5 8" />
+          </svg>
+        </button>
+      )}
 
       {/* Lumière chaude pendant le reveal du logo */}
       <AnimatePresence>

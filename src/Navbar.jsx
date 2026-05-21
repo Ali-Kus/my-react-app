@@ -120,6 +120,7 @@ const styles = {
   logoBox: {
     width: 150,
     height: 64,
+    marginLeft: 20,
     display: "flex",
     alignItems: "center",
     justifyContent: "center",

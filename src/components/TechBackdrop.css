@@ -21,6 +21,14 @@
 }
 
 .tech-line {
+  /* IMPORTANT : on force la largeur à 100% du parent (.tech-backdrop) pour
+     que la boîte de chaque ligne ait le MÊME repère de coordonnées que celui
+     utilisé pour calculer --tx/--ty (qui sont posés sur .tech-backdrop).
+     Sans ça, white-space: nowrap rend la boîte aussi large que le texte
+     (≈ 3000px), son bord gauche sort très loin à gauche de l'écran, et le
+     gradient finit cadré au mauvais endroit (souvent collé au bord gauche). */
+  width: 100%;
+  text-align: center;
   font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
   font-size: 1.2rem;
   font-weight: 600;
