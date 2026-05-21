@@ -11,22 +11,6 @@
   }
 }
 
-/* Pendant un drag-scroll, on rebascule sur un curseur natif "grabbing" :
-   - le custom cursor n'a plus de sens (on ne pointe pas, on tracte) ;
-   - le feedback visuel "main qui agrippe" rassure l'utilisateur sur l'état. */
-@media (pointer: fine) {
-  body.is-drag-scrolling,
-  body.is-drag-scrolling * {
-    cursor: grabbing !important;
-  }
-}
-
-body.is-drag-scrolling .cursor-dot,
-body.is-drag-scrolling .cursor-halo,
-body.is-drag-scrolling .cursor-ripple {
-  display: none !important;
-}
-
 /* ----- Pointe : "liquidish" reverse color ------------------- */
 .cursor-dot {
   position: fixed;

@@ -4,39 +4,15 @@ body {
 }
 
 html {
+  scroll-snap-type: y mandatory;
   scroll-padding-top: 96px;
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
 
-/* Scroll-snap : Firefox et Safari l'implémentent gentiment (snap au repos
-   seulement). Chromium (Chrome/Edge) le ré-applique pendant le momentum
-   scroll, ce qui rendait la molette visqueuse et cassait le drag-scroll.
-   → Activé uniquement sur Firefox et Safari. Voir main.jsx pour la
-   détection UA et la rationale. */
-html.ua-firefox,
-html.ua-safari {
-  scroll-snap-type: y proximity;
-}
-
 html::-webkit-scrollbar {
   width: 0;
   height: 0;
-}
-
-/* Pendant un drag, on coupe la sélection texte + le scroll-behavior smooth
-   (sinon chaque scrollTo serait easé → drag laggy). On désactive aussi le
-   snap au cas où on est sur FF/Safari. */
-body.is-drag-scrolling {
-  user-select: none;
-  -webkit-user-select: none;
-  -ms-user-select: none;
-  scroll-behavior: auto;
-}
-
-html:has(body.is-drag-scrolling) {
-  scroll-snap-type: none;
-  scroll-behavior: auto;
 }
 
 body {
@@ -65,15 +41,10 @@ section {
   margin: 0 auto;
   padding: 80px 24px;
   position: relative;
-}
-
-/* Snap au centre uniquement là où le moteur de scroll-snap se comporte bien.
-   Sur Chromium, on laisse le scroll natif libre — c'est la seule façon que
-   la molette ET le drag soient fluides. */
-html.ua-firefox section,
-html.ua-safari section {
+  /* center : le contenu (carrousel, hero…) tombe au centre du viewport,
+     plutôt que d'aligner le h2 sur le haut. */
   scroll-snap-align: center;
-  scroll-snap-stop: normal;
+  scroll-snap-stop: always;
 }
 
 section::before {
