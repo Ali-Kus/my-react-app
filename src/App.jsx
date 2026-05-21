@@ -62,9 +62,33 @@ function readIntroSeen() {
 function App() {
   const [introDone, setIntroDone] = useState(readIntroSeen);
   const [siteRevealed, setSiteRevealed] = useState(readIntroSeen);
+  const [mailCopied, setMailCopied] = useState(false);
 
   const handleRevealSite = useCallback(() => {
     setSiteRevealed(true);
+  }, []);
+
+  // Copie d'email — preventDefault DOIT être appelé synchronement, avant
+  // tout await, sinon le navigateur a déjà ouvert mailto: en parallèle.
+  // En cas d'échec de clipboard (HTTP non sécurisé ou refus), on relance
+  // mailto: à la main.
+  const handleCopyMail = useCallback((e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const email = "ali.kus@outlook.fr";
+    if (!navigator.clipboard?.writeText) {
+      window.location.href = `mailto:${email}`;
+      return;
+    }
+    navigator.clipboard.writeText(email).then(
+      () => {
+        setMailCopied(true);
+        window.setTimeout(() => setMailCopied(false), 1800);
+      },
+      () => {
+        window.location.href = `mailto:${email}`;
+      },
+    );
   }, []);
 
   const handleFinishIntro = useCallback(() => {
@@ -75,6 +99,112 @@ function App() {
     }
     setIntroDone(true);
   }, []);
+
+  // Click-and-drag scroll : on traîne le contenu comme du papier.
+  //  - Pas sur tactile (pas de sens, déjà natif au doigt).
+  //  - Seuil de 6 px pour ne pas voler un clic accidentel.
+  //  - `behavior: "instant"` sur chaque scrollTo : sans ça, l'`scroll-behavior:
+  //    smooth` global easait chaque update et rendait le drag laggy.
+  //  - rAF coalescing : mousemove peut tirer 4-6 events/frame sur trackpad ;
+  //    on accumule et on applique au max 1 scrollTo par frame.
+  //  - Si on a vraiment dragué, on absorbe le `click` qui suit le mouseup pour
+  //    qu'un bouton sous le curseur ne se déclenche pas.
+  useEffect(() => {
+    if (!siteRevealed) return;
+    if (typeof window === "undefined") return;
+    if (window.matchMedia("(pointer: coarse)").matches) return;
+
+    const DRAG_THRESHOLD = 6;
+    let startY = 0;
+    let startScrollY = 0;
+    let active = false;
+    let moved = false;
+    let pendingY = null;
+    let raf = null;
+
+    const flush = () => {
+      raf = null;
+      if (pendingY != null) {
+        window.scrollTo({ top: pendingY, left: 0, behavior: "instant" });
+        pendingY = null;
+      }
+    };
+
+    const isExcluded = (el) =>
+      !!el?.closest?.(
+        "a, button, input, textarea, select, [role='button'], [role='dialog'], [role='tab'], [data-no-drag-scroll], .project-modal, .project-story-backdrop, .project-story-frame, .project-story-stage, .nav-burger, .copy-mail-btn"
+      );
+
+    const onDown = (e) => {
+      if (e.button !== 0) return;
+      if (isExcluded(e.target)) return;
+      active = true;
+      moved = false;
+      startY = e.clientY;
+      startScrollY = window.scrollY;
+    };
+
+    const onMove = (e) => {
+      if (!active) return;
+      const dy = e.clientY - startY;
+      if (!moved && Math.abs(dy) > DRAG_THRESHOLD) {
+        moved = true;
+        document.body.classList.add("is-drag-scrolling");
+      }
+      if (moved) {
+        // Pull vers le haut → on remonte la page (geste "tirer la feuille")
+        // Clampe à 0 pour ne pas tenter un scroll négatif (bounce non désiré).
+        const maxScroll = Math.max(
+          0,
+          document.documentElement.scrollHeight - window.innerHeight,
+        );
+        pendingY = Math.max(0, Math.min(maxScroll, startScrollY - dy));
+        if (raf == null) raf = requestAnimationFrame(flush);
+      }
+    };
+
+    const swallowClick = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+    };
+
+    const onUp = () => {
+      const wasMoved = moved;
+      active = false;
+      moved = false;
+      pendingY = null;
+      if (raf != null) {
+        cancelAnimationFrame(raf);
+        raf = null;
+      }
+      document.body.classList.remove("is-drag-scrolling");
+      if (wasMoved) {
+        // Absorbe le `click` synthétique qui suit le mouseup (une seule fois).
+        window.addEventListener("click", swallowClick, { capture: true, once: true });
+      }
+    };
+
+    // Si le curseur quitte la fenêtre pendant un drag, on annule proprement
+    // — sinon le drag reste collé au curseur jusqu'au prochain mousedown.
+    const onMouseLeaveDoc = (e) => {
+      if (!active) return;
+      if (e.relatedTarget == null) onUp();
+    };
+
+    window.addEventListener("mousedown", onDown);
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
+    document.addEventListener("mouseleave", onMouseLeaveDoc);
+
+    return () => {
+      window.removeEventListener("mousedown", onDown);
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+      document.removeEventListener("mouseleave", onMouseLeaveDoc);
+      document.body.classList.remove("is-drag-scrolling");
+      if (raf != null) cancelAnimationFrame(raf);
+    };
+  }, [siteRevealed]);
 
   // Peak-end : quand #contact est suffisamment dans le viewport, on bascule
   // le body en mode "finale" → glow chaud en bas, vignettage léger,
@@ -213,6 +343,24 @@ function App() {
                     <span className="contact-label">Email</span>
                     <span className="contact-value">
                       <Signature>ali.kus</Signature>@outlook.fr
+                      <button
+                        type="button"
+                        className={`copy-mail-btn ${mailCopied ? "is-copied" : ""}`}
+                        onClick={handleCopyMail}
+                        aria-label={mailCopied ? "Email copié" : "Copier l'email"}
+                        title={mailCopied ? "Copié !" : "Copier l'email"}
+                      >
+                        {mailCopied ? (
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                            <path d="M5 12l5 5 9-11" />
+                          </svg>
+                        ) : (
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                            <rect x="9" y="9" width="11" height="11" rx="2" />
+                            <path d="M5 15V6a2 2 0 0 1 2-2h9" />
+                          </svg>
+                        )}
+                      </button>
                     </span>
                   </MotionA>
 

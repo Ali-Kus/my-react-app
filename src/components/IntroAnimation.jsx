@@ -103,12 +103,15 @@ export default function IntroAnimation({ onFinish, onRevealSite }) {
     window.addEventListener("wheel", preventScroll, { passive: false });
     window.addEventListener("touchmove", preventScroll, { passive: false });
 
-    // Capture local pour que la cleanup function utilise la même référence
-    // (évite le warning react-hooks/exhaustive-deps sur les refs).
-    const cancelToken = cancelRef.current;
-    cancelToken.cancelled = false;
+    // Cancellation : DEUX niveaux. `cancelled` est scopé à CE run du useEffect
+    // (closure), ce qui le rend immunisé au double-mount de React StrictMode —
+    // le 1er run reste annulé même si le 2e remet à false un drapeau partagé.
+    // `cancelRef.current.cancelled` reste accessible depuis l'extérieur (le
+    // bouton "Passer l'intro" le flip), sans pouvoir ressusciter un run mort.
+    let cancelled = false;
+    cancelRef.current.cancelled = false;
     const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-    const isCancelled = () => cancelToken.cancelled;
+    const isCancelled = () => cancelled || cancelRef.current.cancelled;
 
     const run = async () => {
       setScene("typing");
@@ -187,7 +190,7 @@ export default function IntroAnimation({ onFinish, onRevealSite }) {
     run();
 
     return () => {
-      cancelToken.cancelled = true;
+      cancelled = true;
       window.removeEventListener("wheel", preventScroll);
       window.removeEventListener("touchmove", preventScroll);
       html.style.overflow = previous.htmlOverflow;
