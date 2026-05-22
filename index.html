@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/svg+xml" href="/public/Group 42.svg" />
+    <link rel="icon" type="image/svg+xml" href="/favicon2.svg" />
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600&display=swap" rel="stylesheet">
 
     <title>Ali Kus — Développeur full-stack · Alternance 2026-2027</title>
@@ -15,14 +15,17 @@
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Ali Kus — Full-stack en alternance 2026-2027 · React · Symfony" />
     <meta property="og:description" content="Projets clients livrés, code propre, autonomie réelle. Disponible en alternance de septembre 2026 à juillet 2027 — un dev junior qui rend dès la première semaine." />
-    <meta property="og:image" content="assets/logo.png" />
+    <!-- og:image : idéalement une URL ABSOLUE (https://ton-domaine/logo.png)
+         pour que LinkedIn/Discord/X la récupèrent. En attendant le domaine,
+         chemin racine — Vite sert public/ à la racine, donc /logo.png. -->
+    <meta property="og:image" content="/logo.png" />
     <meta property="og:locale" content="fr_FR" />
 
     <!-- Twitter / X card -->
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content="Ali Kus — Full-stack · Alternance 2026-2027" />
     <meta name="twitter:description" content="React · Symfony · PostgreSQL. Projets concrets, livraison rapide. Alternance sept. 2026 → juillet 2027." />
-    <meta name="twitter:image" content="assets/logo.png" />
+    <meta name="twitter:image" content="/logo.png" />
     <!-- Critical CSS : peint le fond sombre dès le premier frame, avant
          que le bundle JS ne charge App.css. Évite le flash blanc. -->
     <style>
