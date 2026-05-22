@@ -1,16 +1,56 @@
-# React + Vite
+# Portfolio — Ali Kus
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Portfolio personnel d'**Ali Kus**, développeur web full-stack (BUT Informatique, IUT2 Grenoble).
+Une page unique, direction artistique sombre et cinématique, animations sur mesure.
 
-Currently, two official plugins are available:
+🔗 **En ligne : [alikus.fr](https://alikus.fr)**
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+![Aperçu du portfolio](docs/image.png)
 
-## React Compiler
+## ✨ Aperçu
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Intro animée** — frappe naturelle et reveal du logo, jouée une seule fois par session (`sessionStorage`).
+- **Carousel de projets** — six projets (universitaires, personnels, professionnels), rotation auto, pause au survol, modale détaillée et démos interactives à hotspots.
+- **Direction artistique** — fond sombre, signature dorée révélée dans le faisceau du curseur, effet « finale » chaud au niveau de la section contact (peak-end rule).
+- **Accessibilité** — navigation clavier, `aria-*`, respect de `prefers-reduced-motion`.
+- **Responsive** mobile-first et métadonnées Open Graph / Twitter pour le partage.
 
-## Expanding the ESLint configuration
+## 🛠️ Stack
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- [React 19](https://react.dev/)
+- [Vite 7](https://vite.dev/)
+- [Framer Motion](https://www.framer.com/motion/) pour les animations
+- ESLint pour la qualité du code
+
+## 🚀 Démarrage
+
+```bash
+npm install      # installe les dépendances
+npm run dev      # serveur de dev (Vite, HMR)
+npm run build    # build de production → dist/
+npm run preview  # prévisualise le build
+npm run lint     # vérifie le code
+```
+
+## 📁 Structure
+
+```
+src/
+├── App.jsx                  # page unique : hero, projets, à propos, contact
+├── Navbar.jsx
+├── components/
+│   ├── IntroAnimation.jsx   # intro frappe + reveal logo
+│   ├── ProjectsSection.jsx  # carousel + modale projets
+│   ├── ProjectStory.jsx     # démos interactives à hotspots
+│   ├── CursorFx.jsx         # effets liés au curseur
+│   └── TechBackdrop.jsx     # fond animé du footer
+├── utils/smoothScroll.js
+└── assets/
+public/                      # favicons, logo, CV PDF
+```
+
+## 📫 Contact
+
+- Email — ali.kus@outlook.fr
+- LinkedIn — [ali-kus-fr](https://www.linkedin.com/in/ali-kus-fr/)
+- GitHub — [@ali-kus](https://github.com/ali-kus)
