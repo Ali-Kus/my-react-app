@@ -224,7 +224,6 @@ function ScrollIndicator({
 // + un pulse scaleX/scaleY pour le "stretch" liquide mid-transit.
 function LiquidIndicator({ parentRef, activeId, indicatorStyle }) {
   const [rect, setRect] = useState(null);
-  const firstRender = useRef(true);
 
   useLayoutEffect(() => {
     const parent = parentRef.current;
@@ -249,11 +248,6 @@ function LiquidIndicator({ parentRef, activeId, indicatorStyle }) {
 
   if (!rect) return null;
 
-  // Au tout premier rendu, on saute l'animation initiale pour ne pas
-  // voir la pilule "voler" depuis (0,0) jusqu'à l'item actif.
-  const skipInitial = firstRender.current;
-  firstRender.current = false;
-
   return (
     <MotionSpan
       aria-hidden="true"
@@ -262,11 +256,10 @@ function LiquidIndicator({ parentRef, activeId, indicatorStyle }) {
         left: 0,
         top: 0,
       }}
-      initial={
-        skipInitial
-          ? { x: rect.x, y: rect.y, width: rect.width, height: rect.height }
-          : false
-      }
+      // initial={false} : à l'apparition, la pilule se pose directement sur
+      // l'item actif (aucun vol depuis 0,0, aucun drapeau à gérer). framer
+      // anime ensuite chaque changement de position via le spring "liquid".
+      initial={false}
       animate={{
         x: rect.x,
         y: rect.y,
@@ -274,8 +267,8 @@ function LiquidIndicator({ parentRef, activeId, indicatorStyle }) {
         height: rect.height,
         // Le stretch : élargi en X, comprimé en Y au milieu du trajet.
         // null = part de la valeur courante, peak au milieu, retour à 1.
-        scaleX: skipInitial ? 1 : [null, 1.15, 1],
-        scaleY: skipInitial ? 1 : [null, 0.9, 1],
+        scaleX: [null, 1.15, 1],
+        scaleY: [null, 0.9, 1],
       }}
       transition={{
         x: liquidSpring,

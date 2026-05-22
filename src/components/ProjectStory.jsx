@@ -1,6 +1,8 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import "./ProjectStory.css";
+
+const MotionDiv = motion.div;
 
 // Visionneuse "story" : séquence d'écrans pré-rendus + zones cliquables
 // transparentes posées dessus → illusion d'une vraie démo interactive,
@@ -21,7 +23,7 @@ const buildSrc = (folder, file) => `/projects/${folder}/${file}`;
 
 export default function ProjectStory({ project, onClose }) {
   const story = project.story;
-  const frames = story?.frames ?? [];
+  const frames = useMemo(() => story?.frames ?? [], [story]);
   const [frameIndex, setFrameIndex] = useState(0);
   const [showHotspots, setShowHotspots] = useState(false);
   const [imageReady, setImageReady] = useState(false);
@@ -77,7 +79,7 @@ export default function ProjectStory({ project, onClose }) {
   if (!frame) return null;
 
   return (
-    <motion.div
+    <MotionDiv
       className="project-story-backdrop"
       onClick={onClose}
       initial={{ opacity: 0 }}
@@ -116,7 +118,7 @@ export default function ProjectStory({ project, onClose }) {
 
       <div className="project-story-stage" onClick={(e) => e.stopPropagation()}>
         <AnimatePresence mode="wait">
-          <motion.div
+          <MotionDiv
             key={frameIndex}
             className="project-story-frame"
             initial={{ opacity: 0, scale: 0.985 }}
@@ -152,7 +154,7 @@ export default function ProjectStory({ project, onClose }) {
                   {showHotspots && <span className="project-story-hotspot-label">{h.label}</span>}
                 </button>
               ))}
-          </motion.div>
+          </MotionDiv>
         </AnimatePresence>
       </div>
 
@@ -189,6 +191,6 @@ export default function ProjectStory({ project, onClose }) {
           →
         </button>
       </footer>
-    </motion.div>
+    </MotionDiv>
   );
 }

@@ -162,6 +162,19 @@ p {
   /* hérite des styles h1 globaux (gradient, taille, animation) */
 }
 
+/* Chrome/Chromium ne propage PAS le background-clip:text du <h1> aux glyphes
+   portés par l'enfant .signature-name → le nom devient invisible (le span
+   hérite -webkit-text-fill-color: transparent mais n'a aucun fond à révéler).
+   Firefox l'affichait par chance. On peint donc le gradient directement sur
+   le span : rendu identique sur Chrome, Firefox, Safari et Opera. */
+.hero-name .signature-name {
+  background: linear-gradient(135deg, #fff 0%, #888 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
 .hero-role {
   font-size: clamp(1.05rem, 2.4vw, 1.4rem);
   font-weight: 300;
@@ -677,5 +690,38 @@ body.in-finale #contact .contact-grid {
   .status-pill {
     font-size: 0.75rem;
     padding: 6px 14px;
+  }
+}
+
+/* ============================================================
+   Accessibilité — respect de "réduire les animations".
+   Les composants intro / curseur / techbackdrop gèrent déjà leur
+   propre garde ; ici on neutralise les animations globales (fade
+   d'entrée du hero, pulse du status-dot) et on coupe le smooth
+   scroll pour les utilisateurs sensibles au mouvement / vestibulaire.
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  html,
+  body {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Le hero et ses éléments doivent rester pleinement visibles même sans
+     l'animation d'entrée (sinon ils resteraient à opacity:0 / décalés). */
+  #home,
+  .hero-name,
+  .status-dot {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
   }
 }
