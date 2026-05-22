@@ -1,7 +1,7 @@
 import { AnimatePresence, animate, motion } from "framer-motion";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import logo2 from "../assets/logo2.svg";
+import logo2 from "../assets/logo.svg";
 import "./IntroAnimation.css";
 
 // Two-beat opening: greeting, then invitation. The pause between them is the work.

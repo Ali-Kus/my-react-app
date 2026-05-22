@@ -6,7 +6,7 @@ import IntroAnimation from "./components/IntroAnimation";
 import ProjectsSection from "./components/ProjectsSection";
 import CursorFx from "./components/CursorFx";
 import TechBackdrop from "./components/TechBackdrop";
-import logoSvg from "./assets/logo2.svg";
+import logoSvg from "./assets/logo.svg";
 
 const MotionDiv = motion.div;
 const MotionA = motion.a;

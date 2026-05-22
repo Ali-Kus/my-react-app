@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { motion, useMotionValue } from "framer-motion";
-import logo2 from "./assets/logo2.svg";
+import logo2 from "./assets/logo.svg";
 
 const MotionSpan = motion.span;
 
