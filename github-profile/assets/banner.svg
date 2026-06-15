@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="850" height="220" viewBox="0 0 850 220" fill="none" role="img" aria-label="Ali Kus — Full-Stack Developer, open to work">
+  <!--
+    ============================================================
+    BESPOKE ANIMATED BANNER  —  fully hand-written, no library.
+    Animation works because this lives in a .svg file embedded
+    via <img>. (GitHub strips <style> from README HTML, but
+    keeps it INSIDE an SVG image. That's the whole trick.)
+    ============================================================
+  -->
+
+  <defs>
+    <!-- Slow-shifting background gradient -->
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"  stop-color="#0f1020"/>
+      <stop offset="50%" stop-color="#1a1b27"/>
+      <stop offset="100%" stop-color="#16121f"/>
+    </linearGradient>
+
+    <!-- Accent gradient for the name -->
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"  stop-color="#70a5fd"/>
+      <stop offset="100%" stop-color="#bf91f3"/>
+    </linearGradient>
+
+    <!-- Rounded clip so the whole card has soft corners -->
+    <clipPath id="round">
+      <rect width="850" height="220" rx="16"/>
+    </clipPath>
+  </defs>
+
+  <style>
+    /* ----- keyframes ----- */
+    @keyframes fadeUp {
+      0%   { opacity: 0; transform: translateY(14px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes blink {
+      0%, 49%   { opacity: 1; }
+      50%, 100% { opacity: 0; }
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1;   transform: scale(1); }
+      50%      { opacity: 0.55; transform: scale(0.92); }
+    }
+    @keyframes drift {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-40px); }
+    }
+
+    /* ----- bind animations to elements ----- */
+    .name   { animation: fadeUp 0.8s ease-out 0.1s both; }
+    .role   { animation: fadeUp 0.8s ease-out 0.4s both; }
+    .tags   { animation: fadeUp 0.8s ease-out 0.7s both; }
+    .cursor { animation: blink 1s step-end infinite; }
+    .dot    { animation: pulse 1.6s ease-in-out infinite; transform-origin: center; }
+    .grid   { animation: drift 6s linear infinite alternate; }
+
+    /* Respect users who prefer no motion */
+    @media (prefers-reduced-motion: reduce) {
+      .name, .role, .tags { animation: none; opacity: 1; }
+      .cursor, .dot, .grid { animation: none; }
+    }
+  </style>
+
+  <g clip-path="url(#round)">
+    <!-- background -->
+    <rect width="850" height="220" fill="url(#bg)"/>
+
+    <!-- faint drifting grid for texture -->
+    <g class="grid" opacity="0.06" stroke="#70a5fd" stroke-width="1">
+      <path d="M50 0V220 M130 0V220 M210 0V220 M290 0V220 M370 0V220 M450 0V220 M530 0V220 M610 0V220 M690 0V220 M770 0V220 M850 0V220 M930 0V220"/>
+    </g>
+
+    <!-- left accent bar -->
+    <rect x="0" y="0" width="6" height="220" fill="url(#accent)"/>
+
+    <!-- name -->
+    <text class="name" x="48" y="86" font-family="'Segoe UI', Helvetica, Arial, sans-serif"
+          font-size="52" font-weight="800" fill="url(#accent)">Ali Kus</text>
+
+    <!-- role + blinking cursor -->
+    <text class="role" x="50" y="128" font-family="'Consolas', 'SF Mono', monospace"
+          font-size="22" font-weight="500" fill="#c9d1d9">&lt; Full-Stack Developer /&gt;<tspan class="cursor" fill="#70a5fd">_</tspan></text>
+
+    <!-- status pill: open to work -->
+    <g class="tags">
+      <rect x="50" y="156" width="196" height="34" rx="17" fill="#1f6f43" opacity="0.25"/>
+      <rect x="50" y="156" width="196" height="34" rx="17" fill="none" stroke="#3fb950" stroke-width="1.2"/>
+      <circle class="dot" cx="72" cy="173" r="5" fill="#3fb950"/>
+      <text x="88" y="178" font-family="'Segoe UI', Helvetica, Arial, sans-serif"
+            font-size="14" font-weight="600" fill="#3fb950">Open to internships &amp; work</text>
+
+      <!-- France tag -->
+      <text x="266" y="178" font-family="'Segoe UI', Helvetica, Arial, sans-serif"
+            font-size="14" font-weight="500" fill="#8b949e">📍 France</text>
+    </g>
+  </g>
+</svg>
