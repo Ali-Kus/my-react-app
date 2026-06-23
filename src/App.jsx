@@ -170,7 +170,7 @@ function App() {
 
                 <div className="status-pill">
                   <span className="status-dot" aria-hidden="true" />
-                  <span>Je suis disponible pour une alternance septembre 2026 - juillet 2027</span>
+                  <span>Recherche d'alternance septembre 2026 - juillet 2027</span>
                 </div>
 
                 <h1 className="hero-name">
