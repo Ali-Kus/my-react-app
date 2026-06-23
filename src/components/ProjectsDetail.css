@@ -19,6 +19,9 @@
   --pd-radius-xl: 32px;
   --pd-radius-l: 20px;
   --pd-radius-m: 15px;
+  /* hauteur FIXE du cadre d'aperçu : la section ne change pas de taille
+     d'un projet à l'autre, quelle que soit l'orientation de la capture */
+  --pd-shot-h: 360px;
 
   min-height: 100vh;
   color: var(--pd-txt);
@@ -354,19 +357,26 @@
   background:
     radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.04), transparent 70%),
     #0d0c11;
-  aspect-ratio: 16 / 10;
-  max-height: 360px;
+  /* HAUTEUR fixe (pas un ratio paysage) : le cadre garde la même taille pour
+     tous les projets, et l'image se loge dedans à ses vraies proportions. */
+  height: var(--pd-shot-h);
+  width: 100%;
   cursor: zoom-in;
   display: grid;
   place-items: center;
   padding: 0;
-  width: 100%;
-  transition: aspect-ratio 0.3s ease;
 }
-/* Image ENTIÈRE dans un cadre de taille FIXE : object-fit: contain
-   letterboxe ce qu'il faut (paysage → barres haut/bas, portrait → barres
-   gauche/droite) sans jamais rogner ni redimensionner le cadre. */
-.pd-shot-main img { width: 100%; height: 100%; object-fit: contain; display: block; }
+/* Image ENTIÈRE, jamais rognée : limitée par la hauteur du cadre. Paysage →
+   prend la largeur ; portrait (screenshot téléphone) → prend la hauteur et
+   reste centré, complet du début à la fin. */
+.pd-shot-main img {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  display: block;
+}
 
 .pd-shot-thumbs { display: flex; gap: 10px; }
 .pd-thumb {
@@ -390,8 +400,8 @@
 /* Cover dégradé (placeholder quand pas de capture) */
 .pd-cover {
   border-radius: var(--pd-radius-m);
-  aspect-ratio: 16 / 10;
-  max-height: 360px;
+  height: var(--pd-shot-h);
+  width: 100%;
   position: relative;
   overflow: hidden;
   display: grid;
@@ -557,6 +567,7 @@
 }
 
 @media (max-width: 600px) {
+  .projects-detail { --pd-shot-h: 300px; }
   .pd-page { padding: 16px; }
   .pd-frame { padding: 16px; gap: 16px; }
   .pd-info-grid { grid-template-columns: 1fr; }
