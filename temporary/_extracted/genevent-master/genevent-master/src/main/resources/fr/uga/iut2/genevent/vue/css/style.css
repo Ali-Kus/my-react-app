@@ -1,0 +1,45 @@
+.btnDefault {
+  -fx-background-color: #662c91;
+  -fx-border-radius: 3px;
+  -fx-border-width: 1px;
+  -fx-border-color: #592680;
+}
+.btnDefault:hover {
+  -fx-background-color: #502273;
+}
+
+.btnGray {
+  -fx-background-color: #eee;
+  -fx-border-radius: 3px;
+  -fx-border-width: 1px;
+  -fx-border-color: #ccc;
+}
+.btnGray:hover {
+  -fx-background-color: #ddd;
+}
+
+.label {
+  -fx-font-size: 15px;
+  -fx-font-family: Arial, sans-serif;
+}
+.labelTitle {
+  -fx-font-size: 22px;
+  -fx-font-family: Arial, sans-serif;
+}
+.input {
+  -fx-font-size: 14px;
+  -fx-font-family: Arial, sans-serif;
+}
+
+.header {
+  -fx-background-color: #662c91;
+}
+.headerTitle {
+  -fx-font-size: 32px;
+  -fx-font-weight: bold;
+  -fx-font-family: Arial, sans-serif;
+}
+
+.scrollPane {
+  -fx-background-color: #fff;
+}

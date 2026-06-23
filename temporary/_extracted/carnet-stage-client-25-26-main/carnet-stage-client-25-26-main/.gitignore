@@ -1,0 +1,34 @@
+# Android/Gradle build outputs
+.gradle/
+**/build/
+**/out/
+
+# Local configuration (machine-specific)
+local.properties
+
+# Android Studio / IntelliJ
+.idea/
+*.iml
+
+# Native build artifacts
+.externalNativeBuild/
+.cxx/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs and temp files
+*.log
+*.tmp
+*.swp
+
+# Signing and sensitive files
+*.jks
+*.keystore
+*.p12
+
+# Firebase / Google services config (often contains project-specific secrets)
+**/google-services.json
+
+*copilot*

@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit EtatCandidature{% endblock %}
+
+{% block body %}
+    <h1>Editer EtatCandidature</h1>
+
+    {{ include('Admin/etat_candidature/_form.html.twig', {'button_label': 'Enregistrer'}) }}
+
+    <a href="{{ path('app_etat_candidature_index') }}" class="btn btn-secondary col-md-1">Retour Liste</a>
+
+    {{ include('Admin/etat_candidature/_delete_form.html.twig') }}
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit CompteEtudiant{% endblock %}
+
+{% block body %}
+    <h1>Editer CompteEtudiant</h1>
+
+    {{ include('Admin/compte_etudiant/_form.html.twig', {'button_label': 'Enregistrer'}) }}
+
+    <a href="{{ path('app_compte_etudiant_index') }}" class="btn btn-secondary col-md-1">Retour Liste</a>
+
+    {{ include('Admin/compte_etudiant/_delete_form.html.twig') }}
+{% endblock %}

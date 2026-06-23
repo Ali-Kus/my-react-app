@@ -4,15 +4,15 @@
 // results show it. This only swaps document.title at runtime, scrolling the
 // name horizontally like a marquee / carousel that loops forever.
 
-const TEXT = 'Ali Kus — Développeur full-stack'
-const SEPARATOR = '㋡🨄ᮟᮄ᳅ᮤ𓅃  •   '
+const TEXT = ' • ᮟᮄ᳅ᮤ •_____________________'
+const SEPARATOR = ' • ᮟᮄ᳅ᮤ •________________________________   '
 
 // One continuous ring of text. Each tick rotates it by one character so the
 // name endlessly turns through the tab.
 const RING = TEXT + SEPARATOR
 const WINDOW = TEXT.length // how many chars are visible at once
 
-const INTERVAL_MS = 9999999999999
+const INTERVAL_MS = 200
 
 export function startTitleAnimation() {
   let offset = 0

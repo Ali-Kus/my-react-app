@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="352.0" prefWidth="515.0" style="-fx-background-color: #fff;" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1">
+
+    <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" style="-fx-background-color: #662C91;">
+        <children>
+            <ImageView fitHeight="53.0" fitWidth="58.0" pickOnBounds="true" preserveRatio="true">
+                <image>
+                    <Image url="@img/logo.png" />
+                </image>
+                <HBox.margin>
+                    <Insets right="20.0" />
+                </HBox.margin>
+            </ImageView>
+            <Label text="LiveSet" textFill="WHITE">
+                <font>
+                    <Font name="Arial Bold" size="36.0" />
+                </font>
+                <opaqueInsets>
+                    <Insets />
+                </opaqueInsets>
+            </Label>
+        </children>
+    </HBox>
+   <VBox maxWidth="-Infinity" minWidth="-Infinity" prefHeight="245.0" prefWidth="400.0">
+      <children>
+         <HBox alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="50.0" prefWidth="200.0">
+            <children>
+               <Button fx:id="btnRetourGerer" mnemonicParsing="false" onAction="#onActionBtnRetourHome" style="-fx-background-color: white;" text="Retour">
+                  <graphic>
+                     <ImageView fitHeight="15.0" fitWidth="15.0" nodeOrientation="LEFT_TO_RIGHT" pickOnBounds="true" preserveRatio="true">
+                        <image>
+                           <Image url="@img/arrow-left-icon.png" />
+                        </image>
+                     </ImageView>
+                  </graphic></Button>
+            </children>
+         </HBox>
+         <HBox prefHeight="50.0" prefWidth="200.0">
+            <children>
+               <Label fx:id="labelNbConcerts" text="Vos concerts (0)">
+                  <font>
+                     <Font name="System Bold" size="20.0" />
+                  </font>
+               </Label>
+            </children>
+         </HBox>
+         <VBox fx:id="containerGerer" prefHeight="200.0" prefWidth="100.0" />
+      </children>
+   </VBox>
+</VBox>

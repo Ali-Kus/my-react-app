@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Candidature{% endblock %}
+
+{% block body %}
+    <h1>Editer Candidature</h1>
+
+    {{ include('Admin/candidature/_form.html.twig', {'button_label': 'Enregistrer'}) }}
+
+    <a href="{{ path('app_candidature_index') }}" class="btn btn-secondary col-md-1">Retour Liste</a>
+
+    {{ include('Admin/candidature/_delete_form.html.twig') }}
+{% endblock %}

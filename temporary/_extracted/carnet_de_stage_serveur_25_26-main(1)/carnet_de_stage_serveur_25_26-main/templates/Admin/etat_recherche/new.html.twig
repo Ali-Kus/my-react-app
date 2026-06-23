@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouveau·elle EtatRecherche{% endblock %}
+
+{% block body %}
+    <h1>Ajouter EtatRecherche</h1>
+
+    {{ include('Admin/etat_recherche/_form.html.twig') }}
+
+    <a href="{{ path('app_etat_recherche_index') }}" class="btn btn-secondary col-md-1">Retour Liste</a>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouveau·elle EtatCandidature{% endblock %}
+
+{% block body %}
+    <h1>Ajouter EtatCandidature</h1>
+
+    {{ include('Admin/etat_candidature/_form.html.twig') }}
+
+    <a href="{{ path('app_etat_candidature_index') }}" class="btn btn-secondary col-md-1">Retour Liste</a>
+{% endblock %}

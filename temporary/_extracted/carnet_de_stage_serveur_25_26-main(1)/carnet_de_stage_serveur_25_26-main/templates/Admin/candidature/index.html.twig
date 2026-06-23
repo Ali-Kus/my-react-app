@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Candidature index{% endblock %}
+
+{% block body %}
+    <h1>Candidatures <a class="btn btn-primary btn-sm" href="{{ path('app_candidature_new') }}"><i class="fa fa-plus"></i> ajouter</a></h1>
+
+    <table class="MyDataTable table table-striped table-sm table-hover small">
+        <thead class="table-dark">
+            <tr>
+                <th>Id</th>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>Parcours</th>
+                <th>Entreprise</th>
+                <th>Offre</th>
+                <th>Parcours</th>
+                <th>TypeAction</th>
+                <th>DateAction</th>
+                <th>Etat</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for candidature in candidatures %}
+                <tr>
+                    <td>{{ "%03d"|format(candidature.id) }}</td>
+                    <td><a target="_blank" href="{{ path("app_etudiant_show",{'id':candidature.compteEtudiant.etudiant.id}) }}">{{ candidature.compteEtudiant.etudiant.nom }}</a></td>
+                    <td>{{ candidature.compteEtudiant.etudiant.prenom }}</td>
+                    <td>{{ candidature.compteEtudiant.parcours }}</td>
+                    <td><a target="_blank" href="{{ path("app_entreprise_show",{'id':candidature.offre.entreprise.id}) }}">{{ candidature.offre.entreprise.raisonSociale }}</a></td>
+                    <td><a target="_blank" href="{{ path("app_offre_show",{'id':candidature.offre.id}) }}">{{ candidature.offre.intitule }}</a></td>
+                    <td>{{ candidature.offre.parcours }}</td>
+                    <td>{{ candidature.typeAction }}</td>
+                    <td>{{ candidature.dateAction ? candidature.dateAction|date('d/m/Y H:i') : '' }}</td>
+                    <td>{% if candidature.etatCandidature %}{{ candidature.etatCandidature.etat }}{% endif %}</td>
+                    <td>
+                        <a href="{{ path('app_candidature_show', {'id': candidature.id}) }}">voir</a>
+                        <a href="{{ path('app_candidature_edit', {'id': candidature.id}) }}">éditer</a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="11">aucun enregistrement trouvé</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

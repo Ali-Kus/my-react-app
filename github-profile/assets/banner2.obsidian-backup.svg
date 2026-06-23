@@ -1,0 +1,147 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="260" viewBox="0 0 1000 260" fill="none"
+     role="img" aria-label="Ali Kus — Full-Stack Developer">
+  <!--
+    ====================================================================
+    LUX BANNER — BLACK GLASS name (obsidian).
+    The black body reads thanks to: a soft halo behind it (separates the
+    black from the dark bg), a bright rim light on the edges, a strong
+    top gloss reflection, a faint bottom reflection, and a moving sheen.
+    No JS — CSS lives inside the .svg.
+    ====================================================================
+  -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0"   stop-color="#1c1c1c"/>
+      <stop offset="0.5" stop-color="#282828"/>
+      <stop offset="1"   stop-color="#201a2e"/>
+    </linearGradient>
+
+    <!-- BLACK GLASS body: top catches light, fades to pure black -->
+    <linearGradient id="glassBody" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0"    stop-color="#41454b" stop-opacity="0.97"/>
+      <stop offset="0.45" stop-color="#15171a" stop-opacity="0.95"/>
+      <stop offset="1"    stop-color="#000000" stop-opacity="0.97"/>
+    </linearGradient>
+
+    <!-- gloss: strong top sheen + faint bottom reflection -->
+    <linearGradient id="gloss" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0"    stop-color="#ffffff" stop-opacity="0.9"/>
+      <stop offset="0.42" stop-color="#ffffff" stop-opacity="0.18"/>
+      <stop offset="0.5"  stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="0.88" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="0.96" stop-color="#ffffff" stop-opacity="0.30"/>
+      <stop offset="1"    stop-color="#ffffff" stop-opacity="0.10"/>
+    </linearGradient>
+
+    <!-- moving sheen band (reflection sliding across the glass) -->
+    <linearGradient id="shineGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0"   stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="0.5" stop-color="#ffffff" stop-opacity="0.85"/>
+      <stop offset="1"   stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+
+    <radialGradient id="glowV" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#5500FF" stop-opacity="0.45"/>
+      <stop offset="1" stop-color="#5500FF" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowG" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#FFD900" stop-opacity="0.18"/>
+      <stop offset="1" stop-color="#FFD900" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- soft light halo so the BLACK letters separate from the dark bg -->
+    <filter id="halo" x="-30%" y="-60%" width="160%" height="220%">
+      <feGaussianBlur stdDeviation="4"/>
+    </filter>
+    <!-- depth shadow under the glass letters -->
+    <filter id="glassShadow" x="-20%" y="-30%" width="140%" height="170%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000000" flood-opacity="0.6"/>
+    </filter>
+
+    <clipPath id="round"><rect width="1000" height="260" rx="22"/></clipPath>
+    <clipPath id="nameClip">
+      <text x="372" y="138" font-family="'Trebuchet MS','Segoe UI',Helvetica,Arial,sans-serif"
+            font-size="78" font-weight="800" letter-spacing="2">ALI KUS</text>
+    </clipPath>
+  </defs>
+
+  <style>
+    @keyframes drawOnce { to { stroke-dashoffset: 0; } }
+    @keyframes fadeUp   { 0% { opacity:0; transform: translateY(16px); } 100% { opacity:1; transform: translateY(0); } }
+    @keyframes growX    { 0% { transform: scaleX(0); } 100% { transform: scaleX(1); } }
+    @keyframes glint    { 0% { transform: translateX(260px); } 16% { transform: translateX(940px); } 100% { transform: translateX(940px); } }
+    @keyframes breathe  { 0%,100% { opacity:.5; } 50% { opacity:.9; } }
+
+    .logo-path { stroke-dasharray:100; stroke-dashoffset:100; animation: drawOnce 1.5s ease-in-out both; }
+    .name      { opacity:0; animation: fadeUp .9s ease-out 1.5s both; }
+    .role      { opacity:0; animation: fadeUp .9s ease-out 1.9s both; }
+    .pill      { opacity:0; animation: fadeUp .9s ease-out 2.2s both; }
+    .accent    { transform: scaleX(0); transform-origin: 372px 162px; animation: growX .8s ease-out 2.0s both; }
+    .divider   { stroke-dasharray:100; stroke-dashoffset:100; animation: drawOnce 1s ease-out 1.2s both; }
+    .shine     { animation: glint 4.5s ease-in-out 2.6s infinite; }
+    .glow      { animation: breathe 5s ease-in-out infinite; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .logo-path,.divider { stroke-dashoffset:0; animation:none; }
+      .name,.role,.pill { opacity:1; animation:none; }
+      .accent { transform:none; animation:none; }
+      .shine,.glow { animation:none; }
+    }
+  </style>
+
+  <g clip-path="url(#round)">
+    <rect width="1000" height="260" fill="url(#bg)"/>
+
+    <ellipse class="glow" cx="170" cy="130" rx="220" ry="180" fill="url(#glowV)"/>
+    <ellipse class="glow" cx="700" cy="150" rx="320" ry="200" fill="url(#glowG)" style="animation-delay:1.5s"/>
+
+    <!-- LOGO (left), draws itself in. 800->200 via scale 0.25 -->
+    <g transform="translate(70 30) scale(0.25)">
+      <path class="logo-path" pathLength="100" style="animation-delay:0s"    d="M750 50H550V125H650H750V250H550" stroke="#FFD900" stroke-width="20" stroke-linecap="square"/>
+      <path class="logo-path" pathLength="100" style="animation-delay:0.2s"  d="M350 319.998V454.998H500V319.998M475 319.998V429.998" stroke="#FFD900" stroke-width="10" stroke-linecap="square"/>
+      <path class="logo-path" pathLength="100" style="animation-delay:0.4s"  d="M50 650H150M150 650L250 550M150 650L250 750M50 550V750" stroke="#FFD900" stroke-width="20" stroke-linecap="square"/>
+      <path class="logo-path" pathLength="100" style="animation-delay:0.6s"  d="M650 550H700M750 550H700M650 750H700M750 750H700M700 550V750" stroke="#5500FF" stroke-width="20" stroke-linecap="square"/>
+      <path class="logo-path" pathLength="100" style="animation-delay:0.8s"  d="M325 319.998V479.998H500M300 319.998V479.998" stroke="#5500FF" stroke-width="10" stroke-linecap="square"/>
+      <path class="logo-path" pathLength="100" style="animation-delay:1.0s"  d="M50 250V150M250 250V150M50 150V50H250V150M50 150H250" stroke="#5500FF" stroke-width="20"/>
+    </g>
+
+    <path class="divider" pathLength="100" d="M320 60 V 200" stroke="#FFD900" stroke-width="1.5" opacity="0.55"/>
+
+    <!-- ===== NAME — BLACK GLASS ===== -->
+    <g class="name">
+      <!-- 0) soft halo behind: detaches the black letters from the dark bg -->
+      <text x="372" y="138" font-family="'Trebuchet MS','Segoe UI',Helvetica,Arial,sans-serif"
+            font-size="78" font-weight="800" letter-spacing="2"
+            fill="none" stroke="#dfe6ff" stroke-width="5" opacity="0.32" filter="url(#halo)">ALI KUS</text>
+
+      <!-- 1) black glass body + bright rim light -->
+      <text x="372" y="138" font-family="'Trebuchet MS','Segoe UI',Helvetica,Arial,sans-serif"
+            font-size="78" font-weight="800" letter-spacing="2"
+            fill="url(#glassBody)" stroke="#ffffff" stroke-opacity="0.5" stroke-width="0.8"
+            filter="url(#glassShadow)">ALI KUS</text>
+
+      <!-- 2) gloss (top sheen + bottom reflection), clipped to letters -->
+      <g clip-path="url(#nameClip)">
+        <rect x="360" y="78" width="450" height="62" fill="url(#gloss)"/>
+      </g>
+
+      <!-- 3) sliding reflection across the glass, clipped to letters -->
+      <g clip-path="url(#nameClip)">
+        <rect class="shine" x="0" y="60" width="150" height="90" fill="url(#shineGrad)"/>
+      </g>
+    </g>
+
+    <rect class="accent" x="372" y="156" width="250" height="3" rx="1.5" fill="#FFD900"/>
+
+    <text class="role" x="374" y="190" font-family="'Consolas','SF Mono',monospace"
+          font-size="21" font-weight="500" letter-spacing="6" fill="#cfc9bf">FULL-STACK DEVELOPER</text>
+
+    <g class="pill">
+      <rect x="374" y="208" width="250" height="30" rx="15" fill="#5500FF" opacity="0.18"/>
+      <rect x="374" y="208" width="250" height="30" rx="15" fill="none" stroke="#8A6BFF" stroke-width="1"/>
+      <circle cx="394" cy="223" r="4.5" fill="#FFD900"/>
+      <text x="408" y="227" font-family="'Segoe UI',Helvetica,Arial,sans-serif"
+            font-size="13" font-weight="600" letter-spacing="1" fill="#cabaff">OPEN TO WORK · FRANCE</text>
+    </g>
+  </g>
+</svg>

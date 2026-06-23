@@ -1,0 +1,10 @@
+<svg width="800" height="800" viewBox="0 0 800 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="800" height="800" fill="#282828"/>
+<path d="M750 50H550V125H650H750V250H550" stroke="#FFD900" stroke-width="20" stroke-linecap="square"/>
+<path d="M350 319.998V454.998H500V319.998M475 319.998V429.998" stroke="#FFD900" stroke-width="10" stroke-linecap="square"/>
+<path d="M50 650H150M150 650L250 550M150 650L250 750M50 550V750" stroke="#FFD900" stroke-width="20" stroke-linecap="square"/>
+<path d="M650 550H700M750 550H700M650 750H700M750 750H700M700 550V750" stroke="#5500FF" stroke-width="20" stroke-linecap="square"/>
+<path d="M325 319.998V479.998H500M300 319.998V479.998" stroke="#5500FF" stroke-width="10" stroke-linecap="square"/>
+<path d="M250 50H50V150H250V50Z" fill="#282828"/>
+<path d="M50 250V150M250 250V150M50 150V50H250V150M50 150H250" stroke="#5500FF" stroke-width="20"/>
+</svg>

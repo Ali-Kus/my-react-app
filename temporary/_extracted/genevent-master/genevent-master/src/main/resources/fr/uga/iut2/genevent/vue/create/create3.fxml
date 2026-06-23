@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
+
+<?import java.lang.String?>
+<?import javafx.collections.FXCollections?>
+<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="600.0" style="-fx-background-color: #fff;" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <HBox alignment="CENTER" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="100.0" prefWidth="200.0" styleClass="header" stylesheets="@../css/style.css">
+         <children>
+            <ImageView fitHeight="53.0" fitWidth="58.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../img/logo.png" />
+               </image>
+               <HBox.margin>
+                  <Insets right="20.0" />
+               </HBox.margin>
+            </ImageView>
+            <Label styleClass="headerTitle" stylesheets="@../css/style.css" text="LiveSet" textFill="WHITE">
+               <font>
+                  <Font name="Arial Bold" size="36.0" />
+               </font>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+            </Label>
+         </children>
+      </HBox>
+      <HBox alignment="BOTTOM_CENTER" prefHeight="28.0" prefWidth="600.0">
+         <children>
+            <Label alignment="CENTER" contentDisplay="CENTER" prefWidth="90.0" stylesheets="@../css/style.css" text="Concert">
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+               <font>
+                  <Font name="Arial" size="15.0" />
+               </font>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <padding>
+                  <Insets left="5.0" />
+               </padding>
+            </Label>
+            <Label alignment="CENTER" prefWidth="90.0" stylesheets="@../css/style.css" text="Lieu">
+               <font>
+                  <Font name="Arial" size="15.0" />
+               </font>
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+               <opaqueInsets>
+                  <Insets left="10.0" />
+               </opaqueInsets>
+               <padding>
+                  <Insets left="5.0" />
+               </padding>
+            </Label>
+            <Label alignment="CENTER" prefHeight="21.0" prefWidth="105.0" stylesheets="@../css/style.css" text="Sous-traitance" textFill="#652d90">
+               <font>
+                  <Font name="Arial" size="15.0" />
+               </font>
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+            </Label>
+            <Label alignment="CENTER" prefWidth="90.0" stylesheets="@../css/style.css" text="Artiste" textFill="#dddddd">
+               <font>
+                  <Font name="Arial" size="15.0" />
+               </font>
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+               <padding>
+                  <Insets right="5.0" />
+               </padding>
+            </Label>
+            <Label alignment="CENTER" prefWidth="90.0" stylesheets="@../css/style.css" text="Récapitulatif" textFill="#dddddd">
+               <font>
+                  <Font name="Arial" size="15.0" />
+               </font>
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+            </Label>
+         </children>
+      </HBox>
+      <HBox alignment="CENTER" prefHeight="33.0" prefWidth="600.0">
+         <children>
+            <Circle fill="#652d90" radius="13.0" stroke="#652d90" strokeType="INSIDE" strokeWidth="5.0" />
+            <Line endX="-39.279815673828125" startX="-105.0" stroke="#652d90" strokeWidth="3.0" />
+            <Circle fill="#632e8f" radius="13.0" stroke="#652d90" strokeType="INSIDE" strokeWidth="5.0" />
+            <Line endX="-39.279815673828125" startX="-105.0" stroke="#652d90" strokeWidth="3.0" />
+            <Circle fill="#ededed00" radius="13.0" stroke="#652d90" strokeType="INSIDE" strokeWidth="5.0" />
+            <Line endX="-39.279815673828125" startX="-105.0" stroke="#eeeeee" strokeWidth="3.0" />
+            <Circle fill="#eeeeee" radius="13.0" stroke="#eeeeee" strokeType="INSIDE" strokeWidth="5.0" />
+            <Line endX="-39.279815673828125" startX="-105.0" stroke="#eeeeee" strokeWidth="3.0" />
+            <Circle fill="#eeeeee" radius="13.0" stroke="#eeeeee" strokeType="INSIDE" strokeWidth="5.0" />
+         </children>
+      </HBox>
+      <VBox maxWidth="400.0" prefHeight="200.0" prefWidth="100.0" VBox.vgrow="ALWAYS">
+         <children>
+            <Label stylesheets="@../css/style.css" text="Matériels">
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+               <font>
+                  <Font name="Arial" size="15.0" />
+               </font>
+            </Label>
+            <ComboBox fx:id="cbxMateriels" prefHeight="26.0" prefWidth="435.0" promptText="Choisir une option" styleClass="input" stylesheets="@../css/style.css">
+               <VBox.margin>
+                  <Insets bottom="15.0" top="5.0" />
+               </VBox.margin>
+               <items>
+                    <FXCollections fx:factory="observableArrayList">
+                       <String fx:value="Star Music" />
+                       <String fx:value="Concerto" />
+                       <String fx:value="Midalusic" />
+                       <String fx:value="Pimusic" />
+                       <String fx:value="-- Pas de soustraitance" />
+                    </FXCollections>
+               </items>
+            </ComboBox>
+            <Label stylesheets="@../css/style.css" text="Sécurité ">
+               <font>
+                  <Font name="Arial" size="15.0" />
+               </font></Label>
+            <ComboBox fx:id="cbxSecurite" prefHeight="26.0" prefWidth="435.0" promptText="Choisir une option" styleClass="input" stylesheets="@../css/style.css">
+               <VBox.margin>
+                  <Insets bottom="15.0" top="5.0" />
+               </VBox.margin>
+               <items>
+                  <FXCollections fx:factory="observableArrayList">
+                     <String fx:value="TheSecurity" />
+                     <String fx:value="Vngix" />
+                     <String fx:value="Misecure" />
+                     <String fx:value="-- Pas de soustraitance" />
+                  </FXCollections>
+               </items>
+            </ComboBox>
+            <Label stylesheets="@../css/style.css" text="Secours">
+               <font>
+                  <Font name="Arial" size="15.0" />
+               </font></Label>
+            <ComboBox fx:id="cbxSecours" prefHeight="26.0" prefWidth="435.0" promptText="Choisir une option" styleClass="input" stylesheets="@../css/style.css">
+               <VBox.margin>
+                  <Insets bottom="15.0" top="5.0" />
+               </VBox.margin>
+               <items>
+                  <FXCollections fx:factory="observableArrayList">
+                        <String fx:value="SosSecours" />
+                        <String fx:value="SecoursPlus" />
+                        <String fx:value="Pompier" />
+                     <String fx:value="-- Pas de soustraitance" />
+                  </FXCollections>
+               </items>
+            </ComboBox>
+            <Label stylesheets="@../css/style.css" text="Publicité">
+               <font>
+                  <Font name="Arial" size="15.0" />
+               </font></Label>
+            <ComboBox fx:id="cbxPublicite" prefHeight="26.0" prefWidth="435.0" promptText="Choisir une option" styleClass="input" stylesheets="@../css/style.css">
+               <VBox.margin>
+                  <Insets bottom="15.0" top="5.0" />
+               </VBox.margin>
+               <items>
+                  <FXCollections fx:factory="observableArrayList">
+                        <String fx:value="PubEvent" />
+                        <String fx:value="LeMonde" />
+                        <String fx:value="TF1" />
+                     <String fx:value="-- Pas de soustraitance" />
+                  </FXCollections>
+               </items>
+            </ComboBox>
+            <Label stylesheets="@../css/style.css" text="Stands">
+               <font>
+                  <Font name="Arial" size="15.0" />
+               </font></Label>
+            <ComboBox fx:id="cbxStands" prefHeight="26.0" prefWidth="435.0" promptText="Choisir une option" styleClass="input" stylesheets="@../css/style.css">
+               <VBox.margin>
+                  <Insets bottom="15.0" top="5.0" />
+               </VBox.margin>
+               <items>
+                  <FXCollections fx:factory="observableArrayList">
+                     <String fx:value="Standy" />
+                     <String fx:value="Mcdo" />
+                     <String fx:value="-- Pas de soustraitance" />
+                  </FXCollections>
+               </items>
+            </ComboBox>
+         </children>
+         <VBox.margin>
+            <Insets top="20.0" />
+         </VBox.margin>
+      </VBox>
+      <HBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefHeight="60.0" prefWidth="400.0" VBox.vgrow="SOMETIMES">
+         <children>
+            <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <Button fx:id="btnBack3" mnemonicParsing="false" onAction="#onActionBack3" styleClass="btnGray" stylesheets="@../css/style.css" text="Retour">
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                     <font>
+                        <Font name="Arial" size="15.0" />
+                     </font>
+                  </Button>
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <Button fx:id="btnNext3" mnemonicParsing="false" onAction="#onActionNext3" styleClass="btnDefault" stylesheets="@../css/style.css" text="Suivant" textFill="WHITE">
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                     <font>
+                        <Font name="Arial" size="15.0" />
+                     </font>
+                  </Button>
+               </children>
+            </HBox>
+         </children>
+      </HBox>
+   </children>
+</VBox>

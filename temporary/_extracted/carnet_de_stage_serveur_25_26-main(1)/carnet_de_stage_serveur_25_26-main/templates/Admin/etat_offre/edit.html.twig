@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit EtatOffre{% endblock %}
+
+{% block body %}
+    <h1>Editer EtatOffre</h1>
+
+    {{ include('Admin/etat_offre/_form.html.twig', {'button_label': 'Enregistrer'}) }}
+
+    <a href="{{ path('app_etat_offre_index') }}" class="btn btn-secondary col-md-1">Retour Liste</a>
+
+    {{ include('Admin/etat_offre/_delete_form.html.twig') }}
+{% endblock %}

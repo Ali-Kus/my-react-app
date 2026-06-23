@@ -1,0 +1,111 @@
+{% extends 'base.html.twig' %}
+{% block title %}Offres par Etudiant{% endblock %}
+{% block sort %}[0, 'asc'], [2, 'desc'], [9, 'desc']{% endblock %}
+{% block body %}
+    {% set styleStatut =    {   1:{'color':'success',   'icon':'check-square-o'}, 
+                                2:{'color':'warning',   'icon':'star'},
+                                3:{'color':'info',      'icon':'eye'},
+                                4:{'color':'muted',     'icon':'eye-slash'}
+                            } %}
+    {% set styleRecherche = {   1:{'color':'warning',   'icon':'exclamation-triangle'}, 
+                                2:{'color':'secondary', 'icon':'eye'},
+                                3:{'color':'info',      'icon':'spinner'},
+                                4:{'color':'success',   'icon':'check-square-o'}
+                            } %}
+    {% set styleCandidature = { 1:{'color':'warning',   'icon':'exclamation-triangle'}, 
+                                2:{'color':'secondary', 'icon':'clock-o'},
+                                3:{'color':'danger',    'icon':'ban'},
+                                4:{'color':'secondary', 'icon':'calendar-o'},
+                                5:{'color':'warning',   'icon':'calendar-o'},
+                                6:{'color':'success',   'icon':'check-square-o'}
+                            } %}
+    <div class="card">
+        <div class="card-header">
+            <h4>
+                <span class="badge rounded-pill bg-{{styleRecherche[compte.etatRecherche.id].color}}"
+                      data-bs-toggle="tooltip" data-bs-title="{{ compte.etatRecherche.descriptif }}">
+                    <i class="fa fa-{{styleRecherche[compte.etatRecherche.id].icon}}"></i> 
+                    {{ compte.etatRecherche.etat }}
+                </span>
+                    {{ compte.etudiant.prenom | capitalize }} <b>{{ compte.etudiant.nom | upper }}</b>
+                    - parcours <b>{{ compte.parcours }}</b>
+            </h4>
+        </div>
+        <div class="card-body">
+            <table class="MyDataTable table table-striped table-sm table-hover small">
+                <thead class="table-dark">
+                    <tr>
+                        <th class="text-center" colspan="4">Candidatures Etudiant</th>
+                        <th class="text-center" colspan="9" style="border-left: thin solid grey">Offres de Stage</th>
+                    </tr>
+                    <tr>                
+                        <th>Vu</th>
+                        <th>Action</th>
+                        <th>Date</th>
+                        <th class="text-center">Etat</th>
+                        <th style="border-left: thin solid grey">Entreprise</th>
+                        <th>Ville</th>
+                        <th>Pays</th>
+                        <th style="width: 20%">Intitule</th>
+                        <th>Descriptif</th>
+                        <th>Date</th>
+                        <th class="text-center">Parcours</th>
+                        <th class="text-center">Url</th>
+                        <th class="text-center">Etat</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for offreCompte in offresByCompte %}
+                        <tr>
+                            <td class="text-center" data-order="{{ offreCompte.ordre }}"
+                                data-bs-toggle="tooltip" data-bs-title="{{ offreCompte.statut }}">
+                                <i class="fa fa-2x fa-{{styleStatut[offreCompte.ordre].icon}} text-{{styleStatut[offreCompte.ordre].color}}"></i>
+                            </td>
+                            {% if offreCompte.candidature %}
+                                <td>{{ offreCompte.candidature.typeAction }}</td>
+                                <td data-order="{{ offreCompte.candidature.dateAction ? offreCompte.candidature.dateAction | date('d/m/Y H:i') : "" }}">
+                                    {{ offreCompte.candidature.dateAction ? offreCompte.candidature.dateAction | date('d/m/Y H:i') : ""}}
+                                </td>
+                                <td>
+                                    <span class="badge rounded-pill bg-{{styleCandidature[offreCompte.candidature.etatCandidature.id].color}}"
+                                          style=""width: 100%"
+                                          data-bs-toggle="tooltip" data-bs-title="{{ offreCompte.candidature.etatCandidature.descriptif }}">
+                                        {#<i class="fa fa-{{styleCandidature[offreCompte.candidature.etatCandidature.id].icon}}"></i>#}
+                                        {{ offreCompte.candidature.etatCandidature }}
+                                </td>
+                            {% else %}
+                                <td/><td/><td/>
+                            {% endif %}
+                            <td style="border-left: thin solid grey"><b>{{ offreCompte.offre.entreprise.raisonSociale }}</b></td>
+                            <td>{{ offreCompte.offre.entreprise.ville }}</td>
+                            <td>{{ offreCompte.offre.entreprise.pays }}</td>
+                            <td>{{ offreCompte.offre.intitule }}</td>
+                            <td>{{ offreCompte.offre.descriptif }}</td>
+                            <td data-order="{{ offreCompte.offre.dateDepot ? offreCompte.offre.dateDepot|date('Y-m-d') : '' }}">
+                                {{ offreCompte.offre.dateDepot ? offreCompte.offre.dateDepot|date('d/m/Y') : '' }}
+                            </td>
+                            <td class="text-center">{{ offreCompte.offre.parcours }}</td>
+                            <td class="text-center">
+                                {% if offreCompte.offre.urlPieceJointe %}
+                                    <a href="{{ offreCompte.offre.urlPieceJointe }}" target="_blank" class="btn btn-sm btn-primary">
+                                        <i class="fa fa-file-text-o"></i>
+                                    </a>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="badge rounded-pill bg-{{offreCompte.offre.etatOffre.id==1 ? "success" : "danger" }}" 
+                                      style="width: 100%"
+                                      data-bs-toggle="tooltip" data-bs-title="{{ offreCompte.offre.etatOffre.descriptif }}">
+                                    {{ offreCompte.offre.etatOffre.etat }}
+                                </span>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="13">aucun enregistrement trouvé</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div></div>
+{% endblock %}

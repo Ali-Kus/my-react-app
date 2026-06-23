@@ -1,0 +1,71 @@
+{% extends 'base.html.twig' %}
+{% block title %}Tableau de Bord{% endblock %}
+{% block sort %}[6,'desc'],[1,'asc'],[2,'asc']{% endblock %}
+{% block body %}
+    {% set isAdmin = is_granted("ROLE_ADMIN") %}
+    {% set styleRecherche = {   1:{'color':'warning',   'icon':'exclamation-triangle'}, 
+                                2:{'color':'secondary', 'icon':'eye'},
+                                3:{'color':'info',      'icon':'spinner'},
+                                4:{'color':'success',   'icon':'check-square-o'}
+                            } %}
+    <div class="card">
+        <div class="card-header">
+            <h4>
+                <i class="fa fa-tachometer"></i>
+                {{ isAdmin ? "Recherches de Stage" : comptes[0].etudiant.nom ~ " " ~ comptes[0].etudiant.prenom }}
+            </h4>
+        </div>
+        <div class="card-body">
+            <table class="MyDataTable table table-striped table-sm small text-left">
+                <thead class="table-dark">
+                    <tr>
+                        <th>NumeroINE</th>
+                        <th>Nom</th>
+                        <th>Prenom</th>
+                        <th>Email</th>
+                        <th>Login</th>
+                        <th class="text-center">Parcours</th>
+                        <th class="text-center">Recherche</th>
+                        <th class="text-center">Consultées</th>
+                        <th class="text-center">Retenues</th>
+                        <th class="text-center">Candidatures</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for compte in comptes %}
+                        {% if "ROLE_ETUDIANT" in compte.roles %}
+                            <tr class="fluo" onclick="location = '{{ isAdmin ? path("app_admin_tableau_de_bord_show", {"id":compte.id}) : path("app_etudiant_tableau_de_bord_show") }}'">
+                                <td>{{ compte.etudiant.numeroINE }}</td>
+                                <td>{{ compte.etudiant.nom }}</td>
+                                <td>{{ compte.etudiant.prenom }}</td>
+                                <td><a onclick="event.stopPropagation();
+                                        location = 'mailto:{{ compte.etudiant.email }}'">{{ compte.etudiant.email }}</a></td>
+                                <td>{{ compte.login }}</td>
+                                <td class="text-center">{{ compte.parcours }}</td>
+                                <td  class="text-center" data-order="{{ compte.etatRecherche.id }}">
+                                    <span class="badge rounded-pill bg-{{styleRecherche[compte.etatRecherche.id].color}}"
+                                          style="width: 100%"
+                                          data-bs-toggle="tooltip" data-bs-title="{{ compte.etatRecherche.descriptif }}">
+                                        {# <i class="fa fa-{{styleRecherche[compte.etatRecherche.id].icon}}"></i> #}
+                                        {{ compte.etatRecherche.etat }}
+                                    </span>
+                                </td>
+                                <td class="text-center text-secondary">
+                                    <b>{{ compte.offreConsultees | length ? compte.offreConsultees | length : "" }}</b>
+                                </td>
+                                <td class="text-center text-info">
+                                    <b>{{ compte.offreRetenues | length ? compte.offreRetenues | length : "" }}</b>
+                                </td>
+                                <td class="text-center text-success">
+                                    <b>{{ compte.candidatures | length ? compte.candidatures | length : "" }}</b>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    {% else %}
+                    <td colspan="10">Aucun Etudiant Inscrit</td>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouveau·elle Offre{% endblock %}
+
+{% block body %}
+    <h1>Ajouter Offre</h1>
+
+    {{ include('Admin/offre/_form.html.twig') }}
+
+    <a href="{{ path('app_offre_index') }}" class="btn btn-secondary col-md-1">Retour Liste</a>
+{% endblock %}

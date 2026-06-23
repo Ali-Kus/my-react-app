@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}CompteEtudiant index{% endblock %}
+{% block sort %}[4,'desc'],[2,'asc'],[3,'asc']{% endblock %}
+{% block body %}
+    <h1>
+        Comptes Etudiant 
+        <a class="btn btn-primary btn-sm" href="{{ path('app_compte_etudiant_new') }}"><i class="fa fa-plus"></i> ajouter</a>
+    </h1>
+
+    <table class="MyDataTable  table table-striped table-sm table-hover small">
+        <thead class="table-dark">
+            <tr>
+                <th>Id</th>
+                <th>Login</th>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>Rôle</th>
+                <th>Parcours</th>
+                <th>DerniereConnexion</th>
+                <th>EtatRecherche</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for compte_etudiant in compte_etudiants %}
+                {% set isAdmin =  compte_etudiant.roles[0]=='ROLE_ADMIN' %}
+                <tr class="{{isAdmin?'text-danger':''}}">
+                    <td>{{ "%03d"|format(compte_etudiant.id) }}</td>
+                    <td>{{ compte_etudiant.login }}</td>
+                    <td>{{ compte_etudiant.etudiant.nom }}</td>
+                    <td>{{ compte_etudiant.etudiant.prenom }}</td>
+                    <td>{{ compte_etudiant.roles ? compte_etudiant.roles[0] : '' }}</td>
+                    <td>{{ not isAdmin ? compte_etudiant.parcours : ''}}</td>
+                    <td>{{ compte_etudiant.derniereConnexion ? compte_etudiant.derniereConnexion|date('d/m/Y i:H') : '' }}</td>
+                    <td>{{ not isAdmin ? compte_etudiant.etatRecherche.etat : ''}}</td>
+                    <td>
+                        <a href="{{ path('app_compte_etudiant_show', {'id': compte_etudiant.id}) }}">voir</a>
+                        <a href="{{ path('app_compte_etudiant_edit', {'id': compte_etudiant.id}) }}">éditer</a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="9">aucun enregistrement trouvé</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

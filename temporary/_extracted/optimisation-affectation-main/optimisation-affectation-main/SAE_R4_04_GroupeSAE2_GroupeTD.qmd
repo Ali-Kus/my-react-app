@@ -1,0 +1,507 @@
+---
+title: Problème d'affectation
+subtitle: Groupe 2
+date: 28/03/2025
+toc: true
+lang: fr
+author: 
+  - Lucas Maillet
+  - Emile Deschenaux
+  - Ené Di Iorio
+  - Ali Kus
+  - Lucas Passet
+filters:
+  - code-visibility
+format:
+  pdf:
+    pdf-engine: xelatex
+    latex-auto-install: true
+    keep-tex: true
+    include-in-header:
+      - text: |
+          \usepackage{amsmath}
+          \usepackage{algpseudocode}
+          \usepackage{tikz}
+          \usepackage{capt-of}
+          \usetikzlibrary{matrix, fit, backgrounds}
+---
+
+\newpage
+
+```{r Import setup, include = FALSE, annexed = TRUE}
+# Imports
+library(dplyr, tidyr)
+```
+
+```{r Chunks setup, include = FALSE}
+library(pacman)
+pacman::p_load(
+  knitr,
+  gMOIP,
+  kableExtra,
+  purrr,
+  xtable
+)
+
+# Code cells setup
+def.chunk.hook  <- knitr::knit_hooks$get("chunk")
+knitr::knit_hooks$set(
+  document = function(txt) {
+    txt <- gsub("\n{3,}", "\n", txt) # Trim multiple line (+2) breaks
+    return (txt)
+  },
+  chunk = function(x, options) {
+    x <- def.chunk.hook(x, options)
+    ifelse(options$size != "normalsize", paste0("\n \\", options$size,"\n\n", x, "\n\n \\normalsize"), "x")
+  }
+)
+options(knitr.table.format = "latex")
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, size="footnotesize", tidy = "styler")
+
+# Extra functions for printing
+
+trace <- ""
+debug <- function(v) trace <<- paste(trace, v)
+getDebugTrace <- function(v) {
+  oldtrace <- trace
+  trace <<- ""
+  return (oldtrace)
+}
+
+kbl2 <- function(...) kbl(..., booktabs = TRUE)
+
+# Display R matrix in latex
+mtx2latex <- function(
+  .data,
+  zeros = list(),
+  marked = list(
+    cols = list(),
+    rows = list()
+  ),
+  useSlash = TRUE,
+  caption = ""
+) {
+  if (length(zeros)) {
+    .data <- outer(
+      1:nrow(.data), 
+      1:ncol(.data),
+      Vectorize(function(i, j) {
+        v = .data[i, j]
+        isMarked = zeros[zeros$row == i & zeros$col == j,]$mark
+        if (!is.na(is.logical(isMarked) && !is.na(isMarked))) 
+          v = sprintf(
+            if (isMarked) "\\fbox{%s}"
+            else if (useSlash) "\\makebox[0pt][l]{\\raisebox{.9pt}{/}}%s"
+            else "%s", 
+            v
+          )
+        return (v)
+    })) 
+  }
+  sprintf(
+    "\\begin{tikzpicture}
+      \\matrix[
+        matrix of math nodes,
+        left delimiter={[},
+        right delimiter={]},
+        nodes={
+          text width=1em, 
+          text height=1em,
+          text depth=.5ex, align=center
+        },%2$s%3$s
+        ] (m)
+      {\n%1$s \\ \\\\};
+    \\end{tikzpicture}
+    \\captionof*{figure}{%4$s}
+    \\vspace{2em}",
+    paste(
+      apply(.data, 1, function(x) paste(x, collapse = " & ")),
+      collapse = " \\ \\\\"
+    ),
+    paste( # Cols colors
+      marked$cols %>% map(
+        function(j) sprintf(
+          "column %d/.append style = {nodes={fill=yellow},fill opacity=0.6, text opacity=1},",
+          j
+      )),
+      collapse = "\n"
+    ),
+    paste( # Rows colors
+      marked$rows %>% map(function(j) sprintf(
+        "row %d/.append style = {nodes={preaction={fill=cyan, fill opacity=0.5}}},", 
+        j
+      )),
+      collapse = "\n"
+    ),
+    caption
+  )
+}
+```
+
+# Modélisation du probème
+
+On dispose de $n$ stages qu'on modélisera comme l'ensemble $S$ tel que $S = \{ s_1, ..., s_n \}$.
+On dispose de $p$ étudiant qu'on modélisera comme l'ensemble $E$ tel que $E = \{ e_1, ..., e_p \}$.
+Chaque étudiant ordonne chaque stage selon ses préférences, représenté par l'ensemble $P$, définie tel que :
+
+$$
+P = \{
+  p_{e,s} \in [[0, n]],
+  \forall (e, s) \in E \times S 
+\}
+$$
+
+On peut alors modéliser ces ensembles sous la forme d'un graphe biparti $G = (S \cup E, P)$.
+
+Pour rappel, le problème ici est de trouver une combinaison d'étudiant-stage ($E \times S$) respectant le plus possible l'ordre de préférence de chacun, ce qui équivaut un problème d'affectation maximale.
+
+On peut donc appliquer les méthodes vu en cours pour le résoudre, et plus précisément l'algorithme de la méthode Hongroise.
+
+Nous envisagerons donc les cas suivants :
+
+- $C0$ : $n < p$ : Il y a plus d'étudiants que de stages
+- $C1$ : $n = p$ : Il y a autant d'étudiants que de stages
+- $C2$ : $n > p$ : Il y a moins d'étudiants que de stages
+
+\newpage
+
+# Implémentation de la méthode hongroise
+
+Afin d'expliquer notre implémentation en R, les [sous-parties suivantes](#etapes) détaillerons implémentation de chaque étape, puis viendra ensuite [leur assemblage](#assemblage-des-étapes). 
+
+Aussi l'ensemble du code est prêt à être copié-collé en annexes.
+
+## Etapes
+
+### Initialisation
+
+Pour appliquer l'algorithme de la méthode hongroise, nous devons d'abord modéliser le graphe $G$ par une matrice $P$ de dimensions $p \times n$ associant chaque ligne à un étudiant et chaque colone à un stage, avec pour valeurs les préférences. Par simplicité on reconciderera $P$ comme une matrice.
+
+$$
+P = 
+\begin{bmatrix}
+  p_{e_1,s_1} & \cdots & p_{e_1,s_n} \\
+  \vdots  & \ddots & \vdots  \\
+  p_{e_p,s_1} & \cdots & p_{e_p,s_n}
+\end{bmatrix}
+$$
+
+### Ajustements
+
+Mais l'algorithme nous pose la contrainte suivante : La matrice traité doit être carré.
+Il faut donc s'en assurer pour chaque cas :
+
+- $C0$ : $n < p$ : 
+  On manque de stage donc certain étudiant n'auront pas de stage, mais on peut essayer de maximiser les préférences de ceux qui peuvent en avoir.
+  Pour compenser, on rajoute des stages fictifs, dont la valeur de préférence par chaque
+  élève est nulle, ainsi après application de l'algorithme, se seront ceux les moins privilégies. Les étudiants associés avec les stages fictifs n'auront pas de stage.
+
+- $C1$ : $n = p$ :
+  Il y a autant d'étudiant que de stage, la matrice est donc carré.
+
+- $C2$ : $n > p$ :
+  Il y a moins d'étudiant que de stage, donc similairement à $C1$, on compense en rajoutant des étudiants fictifs dont les préférences sont toutes nulles.
+
+On va donc implémenter de quoi respecter cette condition :
+
+```{r Init.0}
+# Turn any matrix into a square matrix with 0 as default value
+makeSquare <- function(.data) {
+  n <- ncol(.data)
+  p <- nrow(.data)
+  size <- max(p, n) # Get max dimension
+  squareMatrix <- matrix(0, nrow = size, ncol = size)
+  squareMatrix[1:p, 1:n] <- .data
+  return(squareMatrix)
+}
+```
+
+Aussi étant dans le cas d'un problème de maximisation et non de minimisation,
+nous devons appliquer l'algorithme sur une matrice équivalente $M$ issue de $P$ tel que : 
+
+$$
+\forall m_{e,s} \in M, m_{e,s} = 
+\max_{p_{e,s} \in P} - p_{e,s}, p_{e,s} \in P
+$$
+
+D'où l'implémentation suivante :
+
+```{r Init.1}
+# Get analog matrix for maximum affectation
+complementary <- function(.data) {
+  m <- max(.data)
+  return (apply(.data, 2, function(v) m - v))
+}
+```
+
+\newpage
+
+### Etape 0
+
+Cette étape transforme la matrice $M$ en une nouvelle matrice contenant des zéros à chaque ligne et chaque colonne :
+
+D'abord on retire le minimum par ligne :
+
+$$
+\forall e \in E, p_{e,s} = 
+p_{e,s} - \min_{p_{e,s} \in M}, p_{e,s} \in M
+$$
+
+Puis par colone :
+
+$$
+\forall s \in S, p_{e,s} = 
+p_{e,s} - \min_{p_{e,s} \in M}, p_{e,s} \in M
+$$
+
+D'où l'implémentation :
+
+```{r Step 0, annexed = TRUE}
+# Remove min value by column then by row
+removeMin <- function(.data) {
+  removeMinVector <- function(v) v - min(v) # Remove min value to every values of a vector
+  .data %>%
+    # Remove min by row
+    apply(1, removeMinVector) %>% t %>%
+    # Remove min by col
+    apply(2, removeMinVector)
+}
+```
+
+### Etape 1
+
+Dans cette étape, on encadre et barre des zéros pour attribuer des stages à des étudiants avec des coûts minimaux (et réciproquement ici des coûts maximaux). 
+
+Au lieu d'appliquer une modification directement à la matrice, notre implémentation créer une liste contenant pour chaque zéro ses indexes ainsi que son statut (NA = non-traité, TRUE = encadré, FALSE = barré), statut par défault non-traité.
+
+Ensuite, pour chaque zéro non-traité de cette liste, on récupère l'un de ceux avec le moins d'autres zéros sur la même ligne ou la même colonne, qu'on encadre tout en barrant ceux partageant un index.
+
+```{r Step 1.0, annexed = TRUE}
+# Mark and slash zeros in the list of zeros 
+markZero <- function(.data) {
+  # Get zeros indexes
+  zeros <- .data %>%
+    # Get (row,col) of each cell with a 0-value
+    { which(. == 0, arr.ind = TRUE) } %>% as.data.frame() %>%
+    mutate(mark = NA) # NA here mean neither marked nor slashed
+  
+  # While there is a zero to process
+  while (any(is.na(zeros$mark))) {
+    zero <- zeros %>%
+      filter(is.na(mark)) %>%
+      add_count(row, name = 'nbZerosByRow') %>%
+      add_count(col, name = 'nbZerosByCol') %>%
+      arrange(nbZerosByRow, nbZerosByCol) %>%
+      slice_head(n = 1)
+
+    zeros <- zeros %>%
+      # Slash other zeros in the same row/col
+      mutate(mark = ifelse(row == zero$row | col == zero$col, FALSE, mark)) %>%
+      # Mark current zero
+      mutate(mark = ifelse(row == zero$row & col == zero$col, TRUE, mark))
+  }
+
+  return(zeros)
+}
+```
+
+Avec cette liste de zéros marqués, nous pouvons vérifier si l'algorithme est finie si il y a une zéro encadré par ligne et colonne.
+
+```{r Step 1.1, annexed = TRUE}
+# Return true when the marked zeros is enough to stop the algorithm
+isDone <- function(matrix, zeros) {
+  marked <- zeros[zeros$mark,]
+  return (
+    length(unique(marked$row)) == nrow(matrix)
+    && length(unique(marked$col)) == ncol(matrix)
+  )
+}
+```
+
+### Etape 2
+
+Si on réalise cette étape, c'est qu'il nous manque un zéro dans une ligne ou colonne. Pour résoudre cela, on va chercher à résoudre le problème avec un matrice équivalente.
+
+Pour cela on va créer 2 listes contenant respectivement les lignes et colonnes marqués., de sorte que :
+ 
+a. On marque les lignes sans zéros encadrés
+b. On marque les colonnes contenant un zéro barré dans une ligne marquée
+c. On marque les lignes avec un zéro dans une colonne marquée
+
+On répète b. et c. tant que le nombre de nouvelles lignes marqués augmentent.
+
+Enfin on inverse les lignes marqués et retourne les 2 listes :
+
+```{r Step 2, annexed = TRUE}
+getMarkRowCol <- function(.data, zeros) {
+  marked <- list()
+
+  # a. Select rows without marked zero
+  marked$rows <- setdiff(
+    1:nrow(.data),
+    zeros[zeros$mark == TRUE,]$row
+  )
+
+  # Iterate while new rows are discovered  
+  oldMarkedRowsSize <- 0
+  i <- 0 #| hide_line
+  while (length(marked$rows) > oldMarkedRowsSize) {
+    oldMarkedRowsSize = length(marked$rows)
+    i <- i + 1 #| hide_line
+
+    # b. Add cols with slashed zero in rows
+    marked$cols <- union(
+      marked$cols,
+      zeros[
+        zeros$mark == FALSE
+        & zeros$row %in% marked$rows,
+      ]$col
+    )
+    
+    # c. Add rows with marked zero in cols
+    marked$rows <- union(
+      marked$rows, 
+      zeros[
+        zeros$col %in% marked$cols
+        & zeros$mark == TRUE,
+      ]$row
+    )
+  }
+
+  # Inverse marked row
+  marked$rows = setdiff(
+    1:nrow(.data),
+    marked$rows
+  )
+  return (marked)
+}
+```
+
+### Etape 3
+
+Avec les 2 listes des lignes et colonnes marqués, on récupère le minimum des éléments non marqués de la matrice qu'on retire à ces dernières pour l'ajouter aux éléments doublements marqués.
+
+On peut ensuite réitérer depuis l'[étape 1](#etape--1)
+
+```{r, Step 3, annexed = TRUE}
+removeMarkedMin <- function(.data, marked) {
+  # Get marked cells coordinates
+  colMarkedCoord <- expand.grid(cols=marked$cols, rows=1:nrow(.data))
+  rowMarkedCoord <- expand.grid(cols=1:ncol(.data), rows=marked$rows)
+
+  # Get unmarked cells coordinates
+  unmarkedCoord <- setdiff(
+    expand.grid(cols=1:ncol(.data), rows=1:nrow(.data)),
+    union(rowMarkedCoord, colMarkedCoord)
+  )
+
+  # Get minimum of unmarked cells
+  minUnmarked <- min(unlist(mapply(
+    function(i, j) .data[i,j], 
+    unmarkedCoord$rows, 
+    unmarkedCoord$cols)
+  ))
+  
+  # Remove min to each unmarked cells
+  mapply(
+    function(i, j) .data[i, j] <<- .data[i, j] - minUnmarked,
+    unmarkedCoord$rows,
+    unmarkedCoord$cols
+  )
+
+  # Get double marked cells coordinates
+  dbmarkedCoord <- intersect(rowMarkedCoord, colMarkedCoord)
+
+  # Add min to each double marked cells
+  mapply(
+    function(i, j) .data[i, j] <<- .data[i, j] + minUnmarked,
+    dbmarkedCoord$rows,
+    dbmarkedCoord$cols
+  )
+
+  return (.data)
+}
+```
+
+## Assemblage des étapes
+
+Maintenant que nous avons toutes les implémentaions nécéssaires à l'algorithme, nous pouvons l'assembler les différents étapes dans une seule méthode `resolveAffectation` prenant en paramètre la matrice $P$ non-traitée :
+
+```{r, Assemble, annexed = TRUE}
+resolveAffectation <- function(.data) {
+  P <- makeSquare(.data)
+  debug(mtx2latex(P, caption = "Transformation en matrice carré")) #| hide_line
+
+  M <- complementary(P)
+  debug(mtx2latex(M, caption = "Transformation en matrice équivalente")) #| hide_line
+
+  # Step 0
+  M <- removeMin(M)
+  debug(mtx2latex(M, caption = "Etape 0")) #| hide_line
+
+  # Step 1
+  zeros <- markZero(M)
+  debug(mtx2latex(M, zeros, caption = "Etape 1")) #| hide_line
+
+  # Step 2
+  i <- 1 #| hide_line
+  while (!isDone(M, zeros)) {
+    marked <- getMarkRowCol(M, zeros)
+    debug(mtx2latex(M, zeros, marked, caption = sprintf("Etape 2. itération n°%d", i))) #| hide_line
+
+    # Step 3
+    M <- removeMarkedMin(M, marked)
+    debug(mtx2latex(M, zeros, marked, caption = sprintf("Etape 3. itération n°%d", i))) #| hide_line
+
+    # Step 1 reiteration
+    i <- i + 1 #| hide_line
+    zeros <- M %>% markZero
+    debug(mtx2latex(M, zeros, marked, caption = sprintf("Etape 1. itération n°%d", i))) #| hide_line
+  }
+
+  # Return corresponding pairs with indexes in the original matrix
+  return (zeros[zeros$row <= nrow(.data) & zeros$col <= ncol(.data),])
+}
+```
+
+On peut ainsi appliquer l'algorithme sur une matrice $P$ de dimensions $n \times p$ :
+
+```{r, Main, annexed = TRUE}
+n <- 8
+p <- 10
+P <- matrix(round(rexp(n*p, rate=.1)), ncol=n)
+debug(mtx2latex(P, caption = "Initialisation")) #| hide_line
+
+# Get maximal affectations
+affectations <- resolveAffectation(P)
+
+debug(mtx2latex(P, affectations, useSlash = FALSE, caption = "Résultat")) #| hide_line
+```
+\newpage
+
+# Conclusion
+
+En conclusion, nous avons pu implémenté un algorithme capable de résoudre tous les cas envisagés du problème, et somme en capacité de trouver des stages pouvant satisfaire au plus les préférences des élèves. 
+
+Cependant, lors de nos test, nous avons pu remarquer que plus les dimensions de $P$ sont grandes, plus l'algorithme à un temps de calcul important. Ce qui est évidemment associé à une importante complexité (de calcul), que nous n'avons pas eu le temps de trouver, mais qui est de l'ordre de $O(n^4)$ selon [Wikipédia](https://en.wikipedia.org/wiki/Hungarian_algorithm), ce qui pourrait être réduit à $O(n^3)$ en implémentant l'amélioration d'Edmonds and Karp. 
+
+\newpage
+
+# Annexes
+
+## Implémentation complète
+
+```{r ref.label=knitr::all_labels(annexed == TRUE), include = TRUE}
+#| echo: true
+#| eval: false
+# Full annexed code here
+```
+
+\newpage
+
+## Exemple
+
+Voici la trace de l'exemple donnée en [](#assemblage-des-étapes) :
+
+\centering
+`r getDebugTrace()`

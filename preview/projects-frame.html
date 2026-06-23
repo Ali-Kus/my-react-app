@@ -1,0 +1,679 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Frame projets — preview</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #08070a;
+    --panel: rgba(255, 255, 255, 0.025);
+    --panel-2: rgba(255, 255, 255, 0.04);
+    --line: rgba(255, 255, 255, 0.08);
+    --line-strong: rgba(255, 255, 255, 0.14);
+    --txt: rgba(255, 255, 255, 0.92);
+    --txt-soft: rgba(255, 255, 255, 0.64);
+    --txt-mut: rgba(255, 255, 255, 0.44);
+    --accent: #ff4444;
+    --accent-soft: rgba(255, 68, 68, 0.85);
+    --radius-xl: 32px;
+    --radius-l: 20px;
+    --radius-m: 15px;
+    --radius-s: 999px;
+    --font: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    background:
+      radial-gradient(1200px 700px at 80% -10%, rgba(255, 68, 68, 0.06), transparent 60%),
+      linear-gradient(135deg, #0a0a0a 0%, #131217 100%);
+    color: var(--txt);
+    font-family: var(--font);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 1850px;
+    margin: 0 auto;
+    padding: 30px 28px;
+  }
+
+  /* ====================================================
+     FRAME — coque. Colonne gauche (titre + liste) STICKY,
+     colonne droite (contenu projet) qui défile.
+     ==================================================== */
+  .frame {
+    display: grid;
+    grid-template-columns: 308px 1fr;
+    gap: 22px;
+    padding: 24px;
+    background: linear-gradient(180deg, rgba(22, 20, 26, 0.6), rgba(12, 11, 16, 0.6));
+    border: 1px solid var(--line);
+    border-radius: var(--radius-xl);
+    box-shadow: 0 40px 90px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    /* le frame ne bouge pas : il tient dans la hauteur de l'écran,
+       on voit son bas arrondi. Seul #stage défile à l'intérieur. */
+    height: calc(100vh - 80px);
+    align-items: stretch;
+    overflow: hidden;
+  }
+
+  /* ----- Colonne gauche : entête + rail (fixe) ----- */
+  .side {
+    align-self: start;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    min-height: 0;
+  }
+
+  .page-head .eyebrow {
+    font-size: 0.74rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--accent-soft);
+    margin: 0 0 12px;
+  }
+  .page-head h1 {
+    font-size: clamp(2rem, 2.4vw, 2.6rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.04;
+    margin: 0;
+    background: linear-gradient(135deg, #fff 0%, #8a8a8a 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .rail {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 8px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-l);
+  }
+  .rail-title {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--txt-mut);
+    padding: 10px 12px 6px;
+    margin: 0;
+  }
+  .rail-item {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding: 11px 12px;
+    border: 1px solid transparent;
+    border-radius: var(--radius-m);
+    background: transparent;
+    color: var(--txt-soft);
+    font-family: inherit;
+    font-size: 0.92rem;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+    width: 100%;
+  }
+  .rail-item:hover { background: var(--panel-2); color: var(--txt); }
+  .rail-item.active {
+    background: rgba(255, 68, 68, 0.08);
+    border-color: rgba(255, 68, 68, 0.3);
+    color: #fff;
+  }
+  .rail-badge {
+    width: 36px; height: 36px; flex: 0 0 36px;
+    border-radius: 11px;
+    display: grid; place-items: center;
+    font-size: 0.86rem; font-weight: 700; letter-spacing: -0.02em;
+    color: #fff;
+  }
+  .rail-meta { display: flex; flex-direction: column; min-width: 0; }
+  .rail-name { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 0.96rem; }
+  .rail-year { font-size: 0.74rem; color: var(--txt-mut); }
+
+  /* ====================================================
+     SCÈNE — contenu projet (défile). 2 bandes.
+     ==================================================== */
+  /* enveloppe positionnée : porte les ombres de scroll, ne défile pas */
+  .stage-wrap {
+    position: relative;
+    min-width: 0;
+    min-height: 0;
+  }
+
+  /* ombres internes grisâtres révélées selon le scroll */
+  .scroll-shadow {
+    position: absolute;
+    left: 0;
+    right: 9px; /* laisse passer la scrollbar */
+    height: 56px;
+    pointer-events: none;
+    z-index: 5;
+    opacity: 0;
+    transition: opacity 0.28s ease;
+    border-radius: var(--radius-l);
+    color: white;
+  }
+  .scroll-shadow-top {
+    top: 0;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0));
+  }
+  .scroll-shadow-bottom {
+    bottom: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0));
+  }
+  .stage-wrap.show-top .scroll-shadow-top { opacity: 1; }
+  .stage-wrap.show-bottom .scroll-shadow-bottom { opacity: 1; }
+
+  /* #stage : la zone qui défile. min-height:0 indispensable en grid
+     pour autoriser le scroll interne. padding-right pour la scrollbar. */
+  .stage {
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    overflow-y: auto;
+    padding-right: 8px;
+  }
+  .stage::-webkit-scrollbar { width: 9px; }
+  .stage::-webkit-scrollbar-track { background: transparent; }
+  .stage::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+  .stage::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.22); background-clip: padding-box; }
+  .bento { display: flex; flex-direction: column; gap: 18px; }
+  .stage.swapping .bento { opacity: 0; transform: translateY(8px); }
+  .bento { transition: opacity 0.32s ease, transform 0.32s ease; }
+
+  .band-top {
+    display: grid;
+    grid-template-columns: 1.05fr 1fr;
+    gap: 18px;
+    align-items: stretch;
+  }
+  .band-bottom {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr;
+    gap: 18px;
+  }
+  .info-col { display: flex; flex-direction: column; gap: 18px; }
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-auto-rows: 1fr;
+    gap: 18px;
+    flex: 1;
+  }
+
+  .mod {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-l);
+    padding: 20px 22px;
+  }
+  .mod-label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--txt-mut);
+    margin: 0 0 13px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .mod-label svg { width: 15px; height: 15px; opacity: 0.7; }
+
+  /* Header module */
+  .m-head { padding: 24px 26px; }
+  .m-head .type {
+    font-size: 0.76rem; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.12em; color: var(--accent-soft); margin: 0 0 10px;
+  }
+  .m-head h2 {
+    margin: 0 0 8px; font-size: clamp(1.7rem, 2.4vw, 2.2rem);
+    font-weight: 700; letter-spacing: -0.02em; color: #fff;
+  }
+  .m-head .tagline { margin: 0 0 18px; color: var(--txt-soft); font-size: 1.1rem; line-height: 1.5; }
+  .meta-row { display: flex; flex-wrap: wrap; gap: 10px; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 8px 15px; border-radius: var(--radius-s);
+    background: var(--panel-2); border: 1px solid var(--line);
+    font-size: 0.86rem; color: var(--txt);
+  }
+  .chip svg { width: 15px; height: 15px; opacity: 0.7; }
+  .chip.status-dot::before {
+    content: ''; width: 8px; height: 8px; border-radius: 50%;
+    background: #4ade80; box-shadow: 0 0 8px rgba(74, 222, 128, 0.6);
+  }
+  .chip.status-academic::before { background: #6ba9ff; box-shadow: 0 0 8px rgba(107, 169, 255, 0.6); }
+
+  /* Visual module — un peu plus petit */
+  .m-visual { padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+  .shot-main {
+    border-radius: var(--radius-m);
+    overflow: hidden;
+    border: 1px solid var(--line);
+    /* damier discret derrière les images letterboxées (object-fit: contain),
+       pour que les bords de la capture restent lisibles sur fond sombre */
+    background:
+      radial-gradient(circle at 50% 0%, rgba(255,255,255,0.04), transparent 70%),
+      #0d0c11;
+    aspect-ratio: 16 / 10;
+    max-height: 360px;
+    cursor: zoom-in;
+    display: grid; place-items: center;
+    transition: aspect-ratio 0.3s ease;
+  }
+  .shot-main img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  /* fit "inside" : l'image entière reste visible, on voit ses bords */
+  .shot-main.fit-contain img { object-fit: contain; }
+  /* captures verticales (mobile, dashboard en pleine hauteur) :
+     cadre plus haut pour limiter les bandes latérales */
+  .shot-main.is-portrait { aspect-ratio: 4 / 5; max-height: 440px; }
+
+  .shot-thumbs { display: flex; gap: 10px; }
+  .thumb {
+    flex: 1; aspect-ratio: 16 / 10; border-radius: 10px; overflow: hidden;
+    border: 1px solid var(--line); cursor: pointer; background: #0d0c11;
+    opacity: 0.55; transition: opacity 0.2s, border-color 0.2s; padding: 0;
+  }
+  .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .thumb.fit-contain img { object-fit: contain; }
+  .thumb:hover, .thumb.active { opacity: 1; border-color: rgba(255, 68, 68, 0.4); }
+
+  /* Role / Team / Stack / Links */
+  .m-role { border-left: 2px solid rgba(255, 68, 68, 0.5); }
+  .m-role .role-value { font-size: 1.15rem; color: #fff; font-weight: 500; }
+
+  .team-list { display: flex; flex-direction: column; gap: 10px; }
+  .team-member { display: flex; align-items: center; gap: 11px; font-size: 0.95rem; color: var(--txt); }
+  .avatar {
+    width: 30px; height: 30px; border-radius: 50%; flex: 0 0 30px;
+    display: grid; place-items: center; font-size: 0.72rem; font-weight: 700;
+    background: rgba(255,255,255,0.08); border: 1px solid var(--line); color: var(--txt);
+  }
+  .team-solo { color: var(--txt-soft); font-size: 0.98rem; font-style: italic; margin: 0; }
+
+  .tags { display: flex; flex-wrap: wrap; gap: 9px; }
+  .tag {
+    padding: 6px 14px; border-radius: var(--radius-s);
+    background: var(--panel-2); border: 1px solid var(--line);
+    font-size: 0.8rem; color: var(--txt); white-space: nowrap;
+  }
+
+  .links { display: flex; flex-direction: column; gap: 10px; }
+  .link-btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 11px 16px; border-radius: var(--radius-m);
+    background: var(--panel-2); border: 1px solid var(--line);
+    color: var(--txt); text-decoration: none; font-size: 0.9rem;
+    transition: background 0.2s, border-color 0.2s, transform 0.2s;
+  }
+  .link-btn:hover { background: rgba(255, 68, 68, 0.12); border-color: rgba(255, 68, 68, 0.4); transform: translateX(3px); }
+  .link-btn svg { width: 17px; height: 17px; }
+  .link-btn.disabled { opacity: 0.4; pointer-events: none; }
+
+  /* Description / Features / Learning */
+  .m-desc p { margin: 0; color: var(--txt-soft); line-height: 1.75; font-size: 1rem; }
+
+  .feat-list { margin: 0; padding: 0; list-style: none; display: grid; gap: 11px; }
+  .feat-list li { position: relative; padding-left: 22px; color: var(--txt-soft); line-height: 1.5; font-size: 0.96rem; }
+  .feat-list li::before { content: '›'; position: absolute; left: 2px; color: var(--accent-soft); font-weight: 700; font-size: 1.15em; }
+
+  .m-learn { background: rgba(255, 68, 68, 0.04); border-color: rgba(255, 68, 68, 0.18); }
+  .m-learn .learn-text { margin: 0; font-style: italic; color: rgba(255,255,255,0.8); line-height: 1.65; font-size: 0.98rem; }
+
+  /* ====================================================
+     LIGHTBOX — clic sur l'aperçu = plein écran
+     ==================================================== */
+  .lightbox {
+    position: fixed; inset: 0; z-index: 1000;
+    background: rgba(6, 5, 8, 0.86);
+    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    display: none; align-items: center; justify-content: center;
+    padding: 40px; cursor: zoom-out;
+  }
+  .lightbox.open { display: flex; }
+  .lightbox img {
+    max-width: 94vw; max-height: 90vh;
+    border-radius: 14px; border: 1px solid var(--line-strong);
+    box-shadow: 0 40px 100px rgba(0,0,0,0.6);
+  }
+  .lightbox-close {
+    position: absolute; top: 22px; right: 24px;
+    width: 44px; height: 44px; border-radius: 50%;
+    border: 1px solid var(--line-strong); background: rgba(0,0,0,0.5);
+    color: #fff; cursor: pointer; font-size: 1.4rem; line-height: 1;
+    display: grid; place-items: center;
+  }
+
+  /* ---- responsive ---- */
+  @media (max-width: 1080px) {
+    /* sur petit écran : on empile et c'est la page qui défile (pas #stage) */
+    .frame { grid-template-columns: 1fr; height: auto; overflow: visible; }
+    .stage { overflow-y: visible; padding-right: 0; min-height: auto; height: auto; }
+    .scroll-shadow { display: none; }
+    .band-top { grid-template-columns: 1fr; }
+    .band-bottom { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 600px) {
+    .info-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="frame">
+    <!-- COLONNE GAUCHE STICKY : entête + switcher -->
+    <aside class="side">
+      <div class="page-head">
+        <p class="eyebrow">Preview · frame modulaire</p>
+        <h1>Présentation des projets</h1>
+      </div>
+      <nav class="rail" id="rail"><!-- injecté en JS --></nav>
+    </aside>
+
+    <!-- COLONNE DROITE : contenu projet (défile) -->
+    <div class="stage-wrap" id="stageWrap">
+      <div class="stage" id="stage">
+        <div class="bento" id="bento"><!-- injecté en JS --></div>
+      </div>
+      <div class="scroll-shadow scroll-shadow-top" aria-hidden="true"></div>
+      <div class="scroll-shadow scroll-shadow-bottom" aria-hidden="true"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Lightbox plein écran -->
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" id="lightboxClose" aria-label="Fermer">✕</button>
+  <img id="lightboxImg" src="" alt="">
+</div>
+
+<script>
+const I = {
+  cal: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>',
+  user: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>',
+  team: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-5 6-5s6 1.7 6 5"/><path d="M16 5.5a3 3 0 0 1 0 5.8M18 20c0-2.4-1-4-3-4.6"/></svg>',
+  stack: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3 3 8l9 5 9-5-9-5ZM3 13l9 5 9-5M3 18l9 5 9-5"/></svg>',
+  link: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M10 13a5 5 0 0 0 7 0l2-2a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-2 2a5 5 0 0 0 7 7l1-1"/></svg>',
+  github: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1.5a10.5 10.5 0 0 0-3.32 20.46c.52.1.71-.23.71-.5v-1.96c-2.9.63-3.52-1.24-3.52-1.24-.48-1.2-1.16-1.53-1.16-1.53-.95-.65.07-.64.07-.64 1.05.08 1.6 1.08 1.6 1.08.93 1.6 2.45 1.14 3.05.87.1-.68.36-1.14.66-1.4-2.32-.26-4.76-1.16-4.76-5.16 0-1.14.4-2.07 1.07-2.8-.1-.26-.46-1.3.1-2.72 0 0 .88-.28 2.88 1.07a9.9 9.9 0 0 1 5.24 0c2-1.35 2.87-1.07 2.87-1.07.57 1.42.21 2.46.1 2.72.67.73 1.07 1.66 1.07 2.8 0 4.01-2.45 4.9-4.78 5.15.38.32.71.95.71 1.92v2.85c0 .28.19.61.72.5A10.5 10.5 0 0 0 12 1.5Z"/></svg>',
+  ext: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M14 4h6v6M20 4l-9 9M18 13v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h6"/></svg>',
+};
+
+// shots : chaque capture peut être une string (cover par défaut) ou un objet
+// { src, fit:'cover'|'contain', portrait:true } pour adapter le cadrage par image.
+const PROJECTS = [
+  {
+    initials: 'Is', color: 'linear-gradient(135deg,#1f3a5c,#0a1424)',
+    name: 'InternShip', year: '2026',
+    type: 'Projet de stage serveur — back-office',
+    tagline: 'Back-office de gestion des stages : étudiants, offres, candidatures, tableaux de bord.',
+    period: '2025 → 2026', status: { label: 'Livré', kind: 'dot' },
+    role: 'Développement back-end & administration serveur',
+    team: [],
+    stack: ['Symfony', 'PHP 8.1', 'API Platform', 'PostgreSQL', 'Docker', 'JWT'],
+    links: { github: '#', demo: null },
+    // dashboard pleine hauteur → image verticale, affichée en entier
+    shots: [{ src: 'shots/serveur-dashboard.png', fit: 'contain', portrait: true }],
+    desc: "Texte placeholder. BackOffice de gestion des stages (bo-stages) : pilotage des comptes étudiants, des offres et des candidatures, avec un tableau de bord consolidé (taux de stage, candidatures par état, capacité du vivier). API REST sécurisée par JWT, base PostgreSQL en conteneur Docker.",
+    features: ['Tableau de bord consolidé & indicateurs', 'Gestion des étudiants, offres et candidatures', 'API REST documentée (API Platform)', 'Authentification JWT & rôles'],
+    learning: "Placeholder — administration serveur, déploiement Docker, conception d'une API REST Symfony."
+  },
+  {
+    initials: 'Sa', color: 'linear-gradient(135deg,#2a2f3a,#0d1016)',
+    name: 'SMA Auto', year: '2026',
+    type: 'Projet personnel — semi-pro',
+    tagline: 'Application mobile de devis & facturation pour une carrosserie automobile.',
+    period: '2026', status: { label: 'En production', kind: 'dot' },
+    role: 'Conception & développement complet',
+    team: [],
+    stack: ['Application mobile', 'Base de données', 'Génération PDF'],
+    links: { github: '#', demo: null },
+    // maquette mobile → image verticale, affichée en entier
+    shots: [{ src: 'shots/sma-auto.png', fit: 'contain', portrait: true }],
+    desc: "Texte placeholder. Application mobile de gestion de devis et factures pour une petite entreprise de carrosserie. Saisie des véhicules (immatriculation, marque, modèle), calcul du total TTC et génération de documents — pensée pour un usage terrain réel et un potentiel de commercialisation.",
+    features: ['Gestion des clients et véhicules', 'Devis & factures avec total automatique', 'Numérotation et archivage des documents', 'Interface mobile adaptée au métier'],
+    learning: "Placeholder — concevoir une solution logicielle pro répondant au besoin réel d'un client."
+  },
+  {
+    initials: 'Nd', color: 'linear-gradient(135deg,#5c3a1f,#241409)',
+    name: 'NotaDomus', year: '2024',
+    type: 'Projet universitaire — équipe',
+    tagline: 'Carte interactive des Maisons d\'Illustres réparties à travers la France.',
+    period: '2023 → 2024', status: { label: 'Livré', kind: 'dot' },
+    role: 'Développement (front & back) — équipe Teapot Studio',
+    team: ['E. Dubief', 'M. Rastelli', 'A. Kus', 'N. Rayot', '+3'],
+    stack: ['PHP', 'MVC', 'JavaScript', 'Google Maps API', 'MySQL'],
+    links: { github: '#', demo: null },
+    // carte large : on veut voir les bords (panneaux gauche/droite) → contain
+    shots: [{ src: 'shots/notadomus-map.png', fit: 'contain' }],
+    desc: "Texte placeholder. NotaDomus permet de naviguer parmi les Maisons d'Illustres — bâtiments liés à des artistes, auteurs ou inventeurs — sur une carte interactive (Google Maps API). Filtrage et sélection via le panneau de gauche, dimension sociale (amis) à droite, recherche par mots-clés (illustre ou œuvre). Architecture MVC avec routeur en PHP.",
+    features: ['Carte interactive Google Maps', 'Filtres & sélection des maisons', 'Dimension sociale (liste d\'amis)', 'Recherche par illustre ou œuvre'],
+    learning: "Placeholder — travail d'équipe (Teapot Studio), architecture MVC avec routeur, intégration d'une API cartographique."
+  },
+  {
+    initials: 'Ls', color: 'linear-gradient(135deg,#3a1f5c,#140a24)',
+    name: 'LiveSet', year: '2024',
+    type: 'Projet académique — équipe',
+    tagline: 'Application de création et gestion de concerts live (GenEvent).',
+    period: 'Mars → Juin 2024', status: { label: 'Livré', kind: 'dot' },
+    role: 'Développement & modèle métier',
+    team: ['A. Kus', 'Binôme'],
+    stack: ['Java 11', 'JavaFX', 'FXML', 'Maven', 'MVC'],
+    links: { github: '#', demo: null },
+    // home en paysage + récapitulatif en portrait → fit par image
+    shots: [
+      { src: 'shots/liveset-home.png', fit: 'contain' },
+      { src: 'shots/liveset-recap.png', fit: 'contain', portrait: true },
+    ],
+    desc: "Texte placeholder. LiveSet (GenEvent) est une application JavaFX qui guide l'organisation d'un concert via un assistant multi-étapes : concert, lieu, sous-traitance, artiste, puis récapitulatif financier. Données rendues persistantes par sérialisation.",
+    features: ['Assistant de création multi-étapes', 'Gestion lieux & artistes', 'Récapitulatif financier', 'Persistance des données (sérialisation)'],
+    learning: "Placeholder — architecture MVC, JavaFX, modélisation d'un domaine métier complet."
+  },
+  {
+    initials: 'Dm', color: 'linear-gradient(135deg,#1f5c3a,#0a1f14)',
+    name: 'Analyse Démographique', year: '2025',
+    type: 'Projet personnel — TP',
+    tagline: 'App JS qui interroge l\'API Census.gov et visualise la démographie mondiale.',
+    period: 'Avril 2025', status: { label: 'En ligne', kind: 'dot' },
+    role: 'Conception & développement complet',
+    team: [],
+    stack: ['JavaScript', 'ES Modules', 'Chart.js', 'MVC'],
+    links: { github: '#', demo: 'https://ali-kus.github.io/Projet-JS-API/' },
+    shots: [{ src: 'shots/demographie.png', fit: 'cover' }],
+    desc: "Texte placeholder. Application vanilla JS (architecture MVC) interrogeant l'API Census.gov pour afficher indicateurs et visualisations Chart.js : pyramide des âges, évolution de population, fécondité…",
+    features: ['Architecture MVC sans framework', 'Pyramide des âges Chart.js', 'Favoris en LocalStorage', 'Recherche par pays / année'],
+    learning: "Placeholder — consommation d'API REST, séparation MVC propre en JS natif, data-viz."
+  },
+];
+
+const rail = document.getElementById('rail');
+const stage = document.getElementById('stage');
+const stageWrap = document.getElementById('stageWrap');
+const bento = document.getElementById('bento');
+const lightbox = document.getElementById('lightbox');
+const lightboxImg = document.getElementById('lightboxImg');
+let current = 0;
+
+function railHTML() {
+  return PROJECTS.map((p, i) => `
+    <button class="rail-item ${i === current ? 'active' : ''}" data-i="${i}">
+      <span class="rail-badge" style="background:${p.color}">${p.initials}</span>
+      <span class="rail-meta">
+        <span class="rail-name">${p.name}</span>
+        <span class="rail-year">${p.year}</span>
+      </span>
+    </button>`).join('');
+}
+
+function teamHTML(team) {
+  if (!team.length) return '<p class="team-solo">Projet solo — conçu et développé seul.</p>';
+  return '<div class="team-list">' + team.map(m => {
+    const ini = m.startsWith('+') ? m : m.split(' ').map(s => s[0]).join('').slice(0,2);
+    return `<div class="team-member"><span class="avatar">${ini}</span>${m}</div>`;
+  }).join('') + '</div>';
+}
+
+// normalise une capture : string => objet { src, fit, portrait }
+function normShot(s) {
+  return typeof s === 'string' ? { src: s, fit: 'cover', portrait: false } : s;
+}
+// classes de cadrage d'une capture
+function shotClasses(s) {
+  const n = normShot(s);
+  return `${n.fit === 'contain' ? 'fit-contain' : ''}${n.portrait ? ' is-portrait' : ''}`.trim();
+}
+
+function shotsHTML(shots) {
+  const list = shots.map(normShot);
+  const first = list[0];
+  const main = `<div class="shot-main ${shotClasses(first)}" data-src="${first.src}"><img id="shotMain" src="${first.src}" alt=""></div>`;
+  const thumbs = list.length > 1
+    ? '<div class="shot-thumbs">' + list.map((s, i) =>
+        `<button class="thumb ${s.fit === 'contain' ? 'fit-contain' : ''} ${i===0?'active':''}"
+           data-src="${s.src}" data-fit="${s.fit}" data-portrait="${s.portrait ? '1' : '0'}">
+           <img src="${s.src}" alt=""></button>`).join('') + '</div>'
+    : '';
+  return main + thumbs;
+}
+
+function bentoHTML(p) {
+  const statusClass = p.status.kind === 'academic' ? 'status-academic' : 'status-dot';
+  return `
+    <div class="band-top">
+      <section class="mod m-visual">
+        <p class="mod-label">Aperçu</p>
+        ${shotsHTML(p.shots)}
+      </section>
+
+      <div class="info-col">
+        <section class="mod m-head">
+          <p class="type">${p.type}</p>
+          <h2>${p.name}</h2>
+          <p class="tagline">${p.tagline}</p>
+          <div class="meta-row">
+            <span class="chip">${I.cal}${p.period}</span>
+            <span class="chip ${statusClass}">${p.status.label}</span>
+          </div>
+        </section>
+
+        <div class="info-grid">
+          <section class="mod m-role">
+            <p class="mod-label">${I.user} Mon rôle</p>
+            <div class="role-value">${p.role}</div>
+          </section>
+
+          <section class="mod m-team">
+            <p class="mod-label">${I.team} Équipe</p>
+            ${teamHTML(p.team)}
+          </section>
+
+          <section class="mod m-stack">
+            <p class="mod-label">${I.stack} Stack technique</p>
+            <div class="tags">${p.stack.map(s => `<span class="tag">${s}</span>`).join('')}</div>
+          </section>
+
+          <section class="mod m-links">
+            <p class="mod-label">${I.link} Liens</p>
+            <div class="links">
+              <a class="link-btn ${p.links.github ? '' : 'disabled'}" href="${p.links.github || '#'}" target="_blank">${I.github} Code source</a>
+              <a class="link-btn ${p.links.demo ? '' : 'disabled'}" href="${p.links.demo || '#'}" target="_blank">${I.ext} ${p.links.demo ? 'Démo en ligne' : 'Pas de démo'}</a>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+
+    <div class="band-bottom">
+      <section class="mod m-desc">
+        <p class="mod-label">Description</p>
+        <p>${p.desc}</p>
+      </section>
+
+      <section class="mod m-feat">
+        <p class="mod-label">Fonctionnalités clés</p>
+        <ul class="feat-list">${p.features.map(f => `<li>${f}</li>`).join('')}</ul>
+      </section>
+
+      <section class="mod m-learn">
+        <p class="mod-label">Ce que j'ai appris</p>
+        <p class="learn-text">${p.learning}</p>
+      </section>
+    </div>
+  `;
+}
+
+function openLightbox(src) {
+  lightboxImg.src = src;
+  lightbox.classList.add('open');
+}
+function closeLightbox() {
+  lightbox.classList.remove('open');
+}
+
+// Ombres de scroll : haut si du contenu au-dessus, bas si du contenu en dessous.
+function updateShadows() {
+  const max = stage.scrollHeight - stage.clientHeight;
+  const t = stage.scrollTop;
+  stageWrap.classList.toggle('show-top', t > 2);
+  stageWrap.classList.toggle('show-bottom', t < max - 2);
+}
+
+function render() {
+  rail.querySelectorAll('.rail-item').forEach(b => b.classList.toggle('active', +b.dataset.i === current));
+  bento.innerHTML = bentoHTML(PROJECTS[current]);
+
+  const shotMain = bento.querySelector('.shot-main');
+  // clic sur l'aperçu principal → plein écran
+  shotMain.addEventListener('click', () => openLightbox(shotMain.dataset.src));
+  // miniatures : changent l'aperçu principal + son cadrage (fit / portrait)
+  bento.querySelectorAll('.thumb').forEach(t => t.addEventListener('click', () => {
+    shotMain.querySelector('img').src = t.dataset.src;
+    shotMain.dataset.src = t.dataset.src;
+    shotMain.classList.toggle('fit-contain', t.dataset.fit === 'contain');
+    shotMain.classList.toggle('is-portrait', t.dataset.portrait === '1');
+    bento.querySelectorAll('.thumb').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+  }));
+
+  // recalcule les ombres après changement de contenu (hauteur différente)
+  stage.scrollTop = 0;
+  requestAnimationFrame(updateShadows);
+}
+
+function switchTo(i) {
+  if (i === current) return;
+  stage.classList.add('swapping');
+  setTimeout(() => { current = i; render(); stage.classList.remove('swapping'); }, 200);
+  rail.querySelectorAll('.rail-item').forEach(b => b.classList.toggle('active', +b.dataset.i === i));
+}
+
+rail.innerHTML = '<p class="rail-title">Projets</p>' + railHTML();
+rail.querySelectorAll('.rail-item').forEach(b => b.addEventListener('click', () => switchTo(+b.dataset.i)));
+
+document.getElementById('lightboxClose').addEventListener('click', closeLightbox);
+lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLightbox(); });
+
+stage.addEventListener('scroll', updateShadows, { passive: true });
+window.addEventListener('resize', updateShadows);
+
+render();
+</script>
+</body>
+</html>

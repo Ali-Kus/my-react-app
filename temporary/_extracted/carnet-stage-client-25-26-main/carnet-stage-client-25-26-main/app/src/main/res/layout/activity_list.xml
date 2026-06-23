@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+                                 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+                                     xmlns:app="http://schemas.android.com/apk/res-auto"
+                                     xmlns:tools="http://schemas.android.com/tools"
+                                     android:layout_width="match_parent"
+                                     android:layout_height="match_parent"
+                                     android:background="#F3F6FB"
+                                     android:fillViewport="true"
+                                     tools:context=".ListActivity">
+
+                                     <LinearLayout
+                                         android:layout_width="match_parent"
+                                         android:layout_height="wrap_content"
+                                         android:orientation="vertical"
+                                         android:padding="20dp">
+
+                                         <com.google.android.material.card.MaterialCardView
+                                             android:layout_width="wrap_content"
+                                             android:layout_height="wrap_content"
+                                             app:cardBackgroundColor="#EEF2FF"
+                                             app:cardCornerRadius="18dp"
+                                             app:cardElevation="0dp"
+                                             app:strokeColor="#C7D2FE"
+                                             app:strokeWidth="1dp">
+
+                                             <TextView
+                                                 android:id="@+id/backButton"
+                                                 android:layout_width="wrap_content"
+                                                 android:layout_height="wrap_content"
+                                                 android:paddingHorizontal="14dp"
+                                                 android:paddingVertical="9dp"
+                                                 android:text="← Retour"
+                                                 android:textColor="#4338CA"
+                                                 android:textSize="15sp"
+                                                 android:textStyle="bold" />
+                                         </com.google.android.material.card.MaterialCardView>
+
+                                         <com.google.android.material.card.MaterialCardView
+                                             android:layout_width="match_parent"
+                                             android:layout_height="wrap_content"
+                                             android:layout_marginTop="18dp"
+                                             app:cardBackgroundColor="#FFFFFF"
+                                             app:cardCornerRadius="22dp"
+                                             app:cardElevation="6dp">
+
+                                             <LinearLayout
+                                                 android:layout_width="match_parent"
+                                                 android:layout_height="wrap_content"
+                                                 android:orientation="vertical"
+                                                 android:padding="20dp">
+
+                                                 <TextView
+                                                     android:id="@+id/titleText"
+                                                     android:layout_width="wrap_content"
+                                                     android:layout_height="wrap_content"
+                                                     android:text="Liste des ressources"
+                                                     android:textColor="#111827"
+                                                     android:textSize="26sp"
+                                                     android:textStyle="bold" />
+
+                                                 <TextView
+                                                     android:id="@+id/responseText"
+                                                     android:layout_width="match_parent"
+                                                     android:layout_height="wrap_content"
+                                                     android:layout_marginTop="12dp"
+                                                     android:text="Aucune donnée pour le moment"
+                                                     android:textColor="#4B5563"
+                                                     android:textSize="16sp" />
+
+                                                 <LinearLayout
+                                                     android:layout_width="match_parent"
+                                                     android:layout_height="wrap_content"
+                                                     android:layout_marginTop="18dp"
+                                                     android:gravity="end"
+                                                     android:orientation="horizontal">
+
+                                                     <com.google.android.material.button.MaterialButton
+                                                         android:id="@+id/secondaryAction"
+                                                         style="@style/Widget.Material3.Button.OutlinedButton"
+                                                         android:layout_width="wrap_content"
+                                                         android:layout_height="wrap_content"
+                                                         android:text="Actualiser"
+                                                         android:textAllCaps="false"
+                                                         android:textStyle="bold"
+                                                         app:cornerRadius="14dp"
+                                                         app:strokeColor="#A5B4FC" />
+                                                 </LinearLayout>
+                                             </LinearLayout>
+                                         </com.google.android.material.card.MaterialCardView>
+                                     </LinearLayout>
+                                 </ScrollView>

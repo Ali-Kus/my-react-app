@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}CompteEtudiant{% endblock %}
+
+{% block body %}
+    <h1>CompteEtudiant</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ compte_etudiant.id }}</td>
+            </tr>
+            <tr>
+                <th>Login</th>
+                <td>{{ compte_etudiant.login }}</td>
+            </tr>
+            <tr>
+                <th>Roles</th>
+                <td>{{ compte_etudiant.roles ? compte_etudiant.roles|json_encode : '' }}</td>
+            </tr>
+            <tr>
+                <th>Password</th>
+                <td>{{ compte_etudiant.password }}</td>
+            </tr>
+            <tr>
+                <th>Parcours</th>
+                <td>{{ compte_etudiant.parcours }}</td>
+            </tr>
+            <tr>
+                <th>DerniereConnexion</th>
+                <td>{{ compte_etudiant.derniereConnexion ? compte_etudiant.derniereConnexion|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_compte_etudiant_index') }}" class="btn btn-secondary col-md-1">Retour Liste</a>
+
+    <a href="{{ path('app_compte_etudiant_edit', {'id': compte_etudiant.id}) }}" class="btn btn-primary col-md-1">Editer</a>
+
+    {{ include('Admin/compte_etudiant/_delete_form.html.twig') }}
+{% endblock %}

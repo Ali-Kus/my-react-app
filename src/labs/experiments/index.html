@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fire Cursor — Katana Slash</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; height: 100%; }
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      background: #f6f3ee;
+      color: #1c1a17;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    .wrap { max-width: 760px; margin: 0 auto; padding: 18vh 24px 30vh; }
+    h1 { font-size: clamp(2.4rem, 7vw, 4.2rem); line-height: 1.02; margin: 0 0 .4em; letter-spacing: -0.02em; }
+    p { font-size: 1.15rem; line-height: 1.7; color: #4a4640; max-width: 60ch; }
+    .hint { opacity: .7; font-size: .95rem; }
+    .row { display: flex; gap: 14px; flex-wrap: wrap; margin: 2rem 0; }
+    button {
+      cursor: none; border: 1px solid #00000018; background: #fff; color: #1c1a17;
+      padding: .8em 1.4em; border-radius: 12px; font-size: 1rem; box-shadow: 0 1px 3px #0000001a;
+      transition: background .2s, transform .1s;
+    }
+    button:hover { background: #f0ece6; transform: translateY(-1px); }
+    #panel {
+      position: fixed; top: 14px; right: 14px; width: 232px; z-index: 999999;
+      background: rgba(20,12,9,.86); border: 1px solid #ff7a3322; border-radius: 14px;
+      padding: 12px 14px; backdrop-filter: blur(8px); font-size: 12px; box-shadow: 0 10px 40px #0006;
+    }
+    #panel h2 { margin: 0 0 8px; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: #ffb37a; }
+    #panel label { margin: 9px 0 2px; color: #cdb6a6; display: flex; justify-content: space-between; }
+    #panel label span { color: #ff9a52; font-variant-numeric: tabular-nums; }
+    #panel input[type=range] { width: 100%; accent-color: #ff5a1f; cursor: none; }
+    #panel .foot { margin-top: 12px; display: flex; gap: 8px; }
+    #panel button { flex: 1; padding: .5em; font-size: 12px; border-radius: 9px; background: #2a140c; color: #ffd9b3; border: 1px solid #ff7a3322; }
+    #panel.collapsed .body { display: none; }
+    #toggle { position: absolute; top: 10px; right: 12px; background: none; border: none; padding: 0; color: #ffb37a; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Hinokami Kagura</h1>
+    <p>Swing your mouse like a katana. It leaves a curved arc of fire along the
+       path it just travelled, white-hot at the tip and breaking into flame
+       tongues along the trailing edge.</p>
+    <p class="hint">The native cursor is hidden. Everything below stays clickable
+       and scrollable — the fire renders on a pass-through overlay, and the page
+       is empty until you move.</p>
+    <div class="row">
+      <button onclick="alert('Still clickable!')">Test a click</button>
+      <button onclick="window.scrollTo({top: document.body.scrollHeight, behavior:'smooth'})">Scroll down</button>
+    </div>
+    <p>Move fast for a long sweeping slash; slow down and it pulls back to a small
+       blade flame at the cursor.</p>
+  </div>
+
+  <div id="panel">
+    <button id="toggle" title="collapse">▾</button>
+    <h2>Fire controls</h2>
+    <div class="body" id="controls"></div>
+    <div class="foot">
+      <button id="reset">Reset</button>
+      <button id="toggleFx">Off</button>
+    </div>
+  </div>
+
+  <script src="fire-cursor.js"></script>
+  <script>
+    var fc = FireCursor.init();
+    var SLIDERS = [
+      ['width', 0.01, 0.16, 0.005],
+      ['taper', 0.3, 3, 0.05],
+      ['lick', 0, 1, 0.02],
+      ['flameDetail', 3, 24, 0.5],
+      ['flameSpeed', 0, 4, 0.05],
+      ['flare', 0, 2, 0.05],
+      ['outline', 0, 1, 0.02],
+      ['sparks', 0, 1.5, 0.02],
+      ['smoothing', 0.05, 1, 0.01]
+    ];
+    var controls = document.getElementById('controls');
+    var inputs = {};
+    SLIDERS.forEach(function (cfg) {
+      var key = cfg[0];
+      var label = document.createElement('label');
+      var val = document.createElement('span');
+      label.textContent = key;
+      label.appendChild(val);
+      var input = document.createElement('input');
+      input.type = 'range';
+      input.min = cfg[1]; input.max = cfg[2]; input.step = cfg[3];
+      input.value = fc.options[key];
+      val.textContent = (+input.value).toFixed(2);
+      input.addEventListener('input', function () {
+        var patch = {}; patch[key] = parseFloat(input.value);
+        fc.setOptions(patch);
+        val.textContent = (+input.value).toFixed(2);
+      });
+      controls.appendChild(label);
+      controls.appendChild(input);
+      inputs[key] = input;
+    });
+    document.getElementById('reset').addEventListener('click', function () {
+      FireCursor.destroy();
+      fc = FireCursor.init();
+      SLIDERS.forEach(function (cfg) {
+        inputs[cfg[0]].value = fc.options[cfg[0]];
+        inputs[cfg[0]].dispatchEvent(new Event('input'));
+      });
+    });
+    var on = true;
+    document.getElementById('toggleFx').addEventListener('click', function () {
+      on = !on;
+      this.textContent = on ? 'Off' : 'On';
+      if (on) { fc = FireCursor.init(); } else { FireCursor.destroy(); }
+    });
+    var panel = document.getElementById('panel');
+    document.getElementById('toggle').addEventListener('click', function () {
+      panel.classList.toggle('collapsed');
+      this.textContent = panel.classList.contains('collapsed') ? '▸' : '▾';
+    });
+  </script>
+</body>
+</html>

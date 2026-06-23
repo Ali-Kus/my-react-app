@@ -1,0 +1,176 @@
+{
+	"info": {
+		"_postman_id": "a0971419-8151-4181-bd14-006c1b51d7c4",
+		"name": "test-api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "http://localhost:8000/api/auth",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"login\": \"fontenae\",\r\n    \"password\": \"eric\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/auth",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"auth"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8000/api/etudiants",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE2NzQ1OTkzNjcsImV4cCI6MTY3NDYwMjk2Nywicm9sZXMiOlsiUk9MRV9BRE1JTiIsIlJPTEVfVVNFUiJdLCJ1c2VybmFtZSI6ImZvbnRlbmFlIn0.apofmylkcmTQuj47A6mb2-_JjsnyAj7sg80LxjWe2SxC-1n-mVos6JObJAjPw-IACfF_5lNjApaDqW66O-hVOFPJPSptv6I_LOKxO2W9OT0DCPFJCx0kelsl_SsUt9dOb6R5WTYdYFHnJ3Ls_m7m8WdfmZCmCKmNLHTQTBNARjbFfqflgG4m08695naFFblUb37Mpxwu1T_jeUOo2okynGTQuNMPbTXmJo9Ul9rDhuMBvlwtLHRx1C3B4d_5k8W3sK2BeT3977dpthQWBaUGdmWAGjUyFbrCWYrOjzb5Nv2Ufe7tZkKdy0c6AoCUF6PMq5Mzp7GUujs0fICtsE-AZhlI3jSWRHFuVVV-lecKbqiS3Su7HVDF4pDun_HwuMBr_3l3QUxLmsT6wxvxoTWAtNkyNbBd_t6IfI_z2diENQp0KDqsQxysA36q6oPnX5UXI_Rls7U0kokn0fFC8iVcO74FrgPce_3v4F3ObgSFpGfTumCQLCLgZzh2CqdK7BhBcbulxgwolkSTHrwr7BFDmzv1MK_QRNqQhMqjHcuSMS-cDBDl_3dWAAmMpCLEYpxQLW6CsURtVt9O0D_C-qtmLo5Mnykt4eT9uzAjf0shSp9RJKpqmGpXyNjA9mAsBxacUGLPKpq47bXRB7nr5DuRp-4IKBglyGUQKEvPFykvx_w",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/api/etudiants",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"etudiants"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8000/api/offre_consultees",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE2NzQ1OTg3NTcsImV4cCI6MTY3NDYwMjM1Nywicm9sZXMiOlsiUk9MRV9BRE1JTiIsIlJPTEVfVVNFUiJdLCJ1c2VybmFtZSI6ImZvbnRlbmFlIn0.AWUlqS3sR_BYjWPpi1voicFuGQ1sI0OPkZZ6vfanBJXloWRlysybSo90gXbpwB1BFV7G_Px73T1sDl7LHxtBx5aORQhzzrGpehjwxBxeEkd5aaLrp_8pW1hv3qzeifuxWkV9yEWJ-cQ18N844d7hPOgKfaXWp5jqM9_EXSbCrnlNZWeDV39gQJXfCU23f6_pGA6G8scjfTDDAiBpJxq_Mp9-oG-Q38XnoW-JDlu9u826CFwlcizHq_yo0WzNTmUjSqt95z0SK5n0kLP3KEXCUmwG3Kz8AmHZulqt6nCeQwHATr09amipSxHJgHFzqxp-8WhreeeIwUTQp1SqlOJRy2Ak25Xont9gyHhTJTFjZ0AZlxEMWv6YLtWYRtt0B2L6QI2wUvkkYGTXxW5K3V42oCsuu_R84KEN__4ofMckBACP0ajdk8Hc9mlT5jBw4XrgfCneLyXqYYEYM9yokX5GxdTJIYJRBNkUDrnhQSoWGVcGrreVhK9YKQWuWpb4yloy_3nCfcrkWGR6EDRCKec_pbuhurDFJsEe4SDL79T-WPuodN3045CICWtKLQoLB6DCP9Um2c6g0wVnKEsuAcyPwLwdLHY-OovDYAJC2-YizaSD7IOJbhJeNgymI6z3-oz8jTK3XUIZV0lxsSkpIb4pl-SgbiubUoRb4fvAWGTKuKQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/api/offre_consultees",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"offre_consultees"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8000/api/compteEtudiant",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE2NzQ2MzcxNjUsImV4cCI6MTY3NDY0MDc2NSwicm9sZXMiOlsiUk9MRV9BRE1JTiIsIlJPTEVfVVNFUiJdLCJ1c2VybmFtZSI6ImZvbnRlbmFlIn0.pausJdPAwzq14sJCHoi1NlgwHNpcc6B_VY9IOGGD4PIQxlm0MrnDDVTj6axIPSQlDEeKq3tmkjHmdPtz8N-r5Qy1x8hEyhza31X6YGgcB1-o7cbgpPEWonXKnn9XiltDRssSG4P3CS5lImeg_0rZ6hc2QFOnqM865K9AgRQ8gYjaz4wPSgus3tPahya3HGxmtFW34H04AD7L2icpuMrdkKR9KfYTjqatycrvh_LAFbdtzsXfRhb3ynaHEWE6YomMRBQuYTSrbQEL3-cIn2h-gyE-POXbxuiBO8vCfrbdHz4ZU-gxlPA6_Vq0xI3gzTo3o6pxVBq3dL1uR8_VRRQbMMVGKOOyY-wKFvhWIlTiJW3oiyFnM3Y7cBIU_bOXJRpTfeGR9yI9Dql0y_c8jM9wQtEU91yD6JGJ0J2D1p7EiF9shqQwgyu9akF87mNGwTaa3drhhAjNxZIvUG4dZbFGa6dHqEmzvCl7NiMxM53BLmfVvzkHN4lRTClKlaqgy3QID-K-EpLlcfbZfKq8xhBf8MWeLikqS8IG92gmDnTnVhh26u00V2jQbWMC-ldjGk_GAznYUUIK4wv-nljJU-TdCDHHFjvd6S4QlqV2IgUS5TCqvgoPKuTt5BmjuI7M1UkCW5h7qS8DOzrkx1SacCBvHgOJ-vduCwEM5wrEybYRwv4",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/api/compte_etudiants",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"compte_etudiants"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8000/api/offre_consultees",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE2NzQ2MzcxNjUsImV4cCI6MTY3NDY0MDc2NSwicm9sZXMiOlsiUk9MRV9BRE1JTiIsIlJPTEVfVVNFUiJdLCJ1c2VybmFtZSI6ImZvbnRlbmFlIn0.pausJdPAwzq14sJCHoi1NlgwHNpcc6B_VY9IOGGD4PIQxlm0MrnDDVTj6axIPSQlDEeKq3tmkjHmdPtz8N-r5Qy1x8hEyhza31X6YGgcB1-o7cbgpPEWonXKnn9XiltDRssSG4P3CS5lImeg_0rZ6hc2QFOnqM865K9AgRQ8gYjaz4wPSgus3tPahya3HGxmtFW34H04AD7L2icpuMrdkKR9KfYTjqatycrvh_LAFbdtzsXfRhb3ynaHEWE6YomMRBQuYTSrbQEL3-cIn2h-gyE-POXbxuiBO8vCfrbdHz4ZU-gxlPA6_Vq0xI3gzTo3o6pxVBq3dL1uR8_VRRQbMMVGKOOyY-wKFvhWIlTiJW3oiyFnM3Y7cBIU_bOXJRpTfeGR9yI9Dql0y_c8jM9wQtEU91yD6JGJ0J2D1p7EiF9shqQwgyu9akF87mNGwTaa3drhhAjNxZIvUG4dZbFGa6dHqEmzvCl7NiMxM53BLmfVvzkHN4lRTClKlaqgy3QID-K-EpLlcfbZfKq8xhBf8MWeLikqS8IG92gmDnTnVhh26u00V2jQbWMC-ldjGk_GAznYUUIK4wv-nljJU-TdCDHHFjvd6S4QlqV2IgUS5TCqvgoPKuTt5BmjuI7M1UkCW5h7qS8DOzrkx1SacCBvHgOJ-vduCwEM5wrEybYRwv4",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"compteEtudiant\": \"/api/compte_etudiants/4\",\r\n  \"offre\": \"/api/offre_consultees/1\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/offre_consultees",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"offre_consultees"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

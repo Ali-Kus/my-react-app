@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}OffreRetenue index{% endblock %}
+
+{% block body %}
+    <h1>Offres de Stage Retenues
+        <a class="btn btn-primary btn-sm" href="{{ path('app_offre_retenue_new') }}"><i class="fa fa-plus"></i> ajouter</a>
+    </h1>
+
+    <table class="MyDataTable  table table-striped table-sm table-hover small">
+        <thead class="table-dark">
+            <tr>
+                <th>Id</th>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>Parcours</th>
+                <th>Entreprise</th>
+                <th>Offre</th>
+                <th>Parcours</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for offre_retenue in offre_retenues %}
+            <tr>
+                <td>{{ "%03d"|format(offre_retenue.id) }}</td>
+                <td><a target="_blank" href="{{ path("app_etudiant_show",{'id':offre_retenue.compteEtudiant.etudiant.id}) }}">{{ offre_retenue.compteEtudiant.etudiant.nom }}</a></td>
+                <td>{{ offre_retenue.compteEtudiant.etudiant.prenom }}</td>
+                <td>{{ offre_retenue.compteEtudiant.parcours }}</td>
+                <td><a target="_blank" href="{{ path("app_entreprise_show",{'id':offre_retenue.offre.entreprise.id}) }}">{{ offre_retenue.offre.entreprise.raisonSociale }}</a></td>
+                <td><a target="_blank" href="{{ path("app_offre_show",{'id':offre_retenue.offre.id}) }}">{{ offre_retenue.offre.intitule }}</a></td>
+                <td>{{ offre_retenue.offre.parcours }}</td>
+                <td>
+                    <a href="{{ path('app_offre_retenue_show', {'id': offre_retenue.id }) }}">voir</a>
+                    <a href="{{ path('app_offre_retenue_edit', {'id': offre_retenue.id }) }}">éditer</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="8">aucun enregistrement trouvé</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

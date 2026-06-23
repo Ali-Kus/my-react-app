@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouveau·elle Candidature{% endblock %}
+
+{% block body %}
+    <h1>Ajouter Candidature</h1>
+
+    {{ include('Admin/candidature/_form.html.twig') }}
+
+    <a href="{{ path('app_candidature_index') }}" class="btn btn-secondary col-md-1">Retour Liste</a>
+{% endblock %}

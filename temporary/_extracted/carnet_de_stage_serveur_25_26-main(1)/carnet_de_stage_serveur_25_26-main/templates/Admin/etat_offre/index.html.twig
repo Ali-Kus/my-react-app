@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}EtatOffre index{% endblock %}
+
+{% block body %}
+    <h1>Etats d'une Offre de Stage
+        <a class="btn btn-primary btn-sm" href="{{ path('app_etat_offre_new') }}"><i class="fa fa-plus"></i> ajouter</a>
+    </h1>
+
+    <table class="MyDataTable  table table-striped table-sm table-hover small">
+        <thead class="table-dark">
+            <tr>
+                <th>Id</th>
+                <th>Etat</th>
+                <th>Descriptif</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for etat_offre in etat_offres %}
+                <tr>
+                    <td>{{ "%03d"|format(etat_offre.id) }}</td>
+                    <td>{{ etat_offre.etat }}</td>
+                    <td>{{ etat_offre.descriptif }}</td>
+                    <td>
+                        <a href="{{ path('app_etat_offre_show', {'id': etat_offre.id}) }}">voir</a>
+                        <a href="{{ path('app_etat_offre_edit', {'id': etat_offre.id}) }}">éditer</a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="4">aucun enregistrement trouvé</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

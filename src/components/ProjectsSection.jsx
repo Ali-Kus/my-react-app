@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import ProjectStory from "./ProjectStory";
 import "./ProjectsSection.css";
 
@@ -163,13 +163,12 @@ const PROJECTS = [
   },
 ];
 
-const ROTATION_MS = 3000;
 const MotionDiv = motion.div;
 
-function ProjectCover({ from, to, initials, size = "sm" }) {
+function ProjectCover({ from, to, initials }) {
   return (
     <div
-      className={`project-cover ${size === "lg" ? "project-cover-lg" : ""}`}
+      className="project-cover"
       style={{ background: `linear-gradient(135deg, ${from} 0%, ${to} 100%)` }}
     >
       <span className="project-cover-initials">{initials}</span>
@@ -177,257 +176,151 @@ function ProjectCover({ from, to, initials, size = "sm" }) {
   );
 }
 
-function ProjectModal({ project, onClose }) {
-  useEffect(() => {
-    const onKey = (e) => {
-      if (e.key === "Escape") onClose();
-    };
-    document.addEventListener("keydown", onKey);
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.removeEventListener("keydown", onKey);
-      document.body.style.overflow = previousOverflow;
-    };
-  }, [onClose]);
-
-  return (
-    <MotionDiv
-      className="project-modal-backdrop"
-      onClick={onClose}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-    >
-      <MotionDiv
-        className="project-modal"
-        onClick={(e) => e.stopPropagation()}
-        initial={{ opacity: 0, y: 24, scale: 0.96 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        exit={{ opacity: 0, y: 16, scale: 0.97, transition: { duration: 0.3 } }}
-        transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby={`project-${project.id}-title`}
-      >
-        <button
-          type="button"
-          className="project-modal-close"
-          onClick={onClose}
-          aria-label="Fermer"
-        >
-          <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" strokeWidth="1.6" fill="none" strokeLinecap="round">
-            <path d="M6 6l12 12M6 18 18 6" />
-          </svg>
-        </button>
-
-        <ProjectCover {...project.cover} size="lg" />
-
-        <div className="project-modal-content">
-          <p className="project-type">{project.type}</p>
-          <h3 id={`project-${project.id}-title`}>{project.title}</h3>
-          <p className="project-subtitle-text">{project.subtitle}</p>
-
-          {project.role && (
-            <div className="project-role-strip">
-              <span className="project-role-label">Mon rôle</span>
-              <span className="project-role-value">{project.role}</span>
-            </div>
-          )}
-
-          <p>{project.description}</p>
-
-          {project.features?.length > 0 && (
-            <>
-              <p className="project-subtitle">Fonctionnalités principales</p>
-              <ul>
-                {project.features.map((f) => (
-                  <li key={f}>{f}</li>
-                ))}
-              </ul>
-            </>
-          )}
-
-          {project.stack?.length > 0 && (
-            <div className="project-stack-modal">
-              {project.stack.map((s) => (
-                <span key={s} className="stack-tag">{s}</span>
-              ))}
-            </div>
-          )}
-
-          {project.learning && (
-            <p className="project-learning">{project.learning}</p>
-          )}
-
-          {project.github && (
-            <a
-              className="project-link"
-              href={project.github}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Voir sur GitHub →
-            </a>
-          )}
-        </div>
-      </MotionDiv>
-    </MotionDiv>
-  );
-}
-
+// Rail gauche (liste) + panneau charbon à coins inversés à droite.
+// Le tab (numéro + type) déborde au-dessus du panneau, la plaque
+// d'actions déborde en dessous : la silhouette dessine les "coins
+// inversés", les congés concaves sont peints en CSS (voir le .css).
 export default function ProjectsSection() {
-  const [openProject, setOpenProject] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [direction, setDirection] = useState(1);
-  const [isPaused, setIsPaused] = useState(false);
+  const [storyOpen, setStoryOpen] = useState(false);
 
-  const total = PROJECTS.length;
   const current = PROJECTS[currentIndex];
+  const num = String(currentIndex + 1).padStart(2, "0");
 
-  useEffect(() => {
-    if (isPaused || openProject) return;
-    const id = setTimeout(() => {
-      setDirection(1);
-      setCurrentIndex((i) => (i + 1) % total);
-    }, ROTATION_MS);
-    return () => clearTimeout(id);
-  }, [currentIndex, isPaused, openProject, total]);
-
-  const goPrev = () => {
-    setDirection(-1);
-    setCurrentIndex((i) => (i - 1 + total) % total);
-  };
-  const goNext = () => {
-    setDirection(1);
-    setCurrentIndex((i) => (i + 1) % total);
-  };
-  const goTo = (i) => {
-    setDirection(i > currentIndex ? 1 : -1);
+  const selectProject = (i) => {
     setCurrentIndex(i);
-  };
-
-  const slideVariants = {
-    enter: (dir) => ({ opacity: 0, x: dir * 60 }),
-    center: { opacity: 1, x: 0 },
-    exit: (dir) => ({ opacity: 0, x: dir * -60 }),
+    setStoryOpen(false);
   };
 
   return (
     <>
       <p className="section-intro">
-        Six projets qui résument mon parcours : universitaires, personnels, professionnels.
-        Survolez pour mettre en pause, cliquez pour le détail.
+        Six projets qui résument mon parcours : universitaires, personnels,
+        professionnels. Sélectionnez-en un pour le détail.
       </p>
 
-      <div
-        className="project-carousel"
-        onMouseEnter={() => setIsPaused(true)}
-        onMouseLeave={() => setIsPaused(false)}
-        onFocus={() => setIsPaused(true)}
-        onBlur={() => setIsPaused(false)}
-      >
-        <button
-          type="button"
-          className="carousel-nav carousel-prev"
-          onClick={goPrev}
-          aria-label="Projet précédent"
-        >
-          <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" strokeWidth="1.6" fill="none" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M15 6l-6 6 6 6" />
-          </svg>
-        </button>
-
-        <div className="carousel-stage">
-          <AnimatePresence mode="wait" custom={direction}>
-            <MotionDiv
-              key={current.id}
-              custom={direction}
-              variants={slideVariants}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-              className="carousel-card-wrapper"
+      <div className="projects-shell">
+        <nav className="projects-rail" aria-label="Sélection du projet">
+          {PROJECTS.map((p, i) => (
+            <button
+              key={p.id}
+              type="button"
+              className={`projects-rail-item ${i === currentIndex ? "is-active" : ""}`}
+              onClick={() => selectProject(i)}
+              aria-current={i === currentIndex ? "true" : undefined}
             >
-              <button
-                type="button"
-                className="project-card carousel-card"
-                onClick={() => setOpenProject(current)}
-                aria-label={`Voir le détail du projet ${current.title}`}
+              <span className="rail-index">{String(i + 1).padStart(2, "0")}</span>
+              <span className="rail-meta">
+                <span className="rail-title">{p.title}</span>
+                <span className="rail-sub">{p.subtitle}</span>
+              </span>
+            </button>
+          ))}
+        </nav>
+
+        <div className="project-panel-wrap">
+          <article className="project-panel" aria-live="polite">
+            <div className="panel-tab">
+              <span className="panel-tab-index">{num}</span>
+              <span className="panel-tab-type">{current.type}</span>
+            </div>
+
+            <AnimatePresence mode="wait" initial={false}>
+              <MotionDiv
+                key={current.id}
+                className="panel-body"
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10, transition: { duration: 0.2 } }}
+                transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
               >
-                <ProjectCover {...current.cover} />
-                <div className="project-card-body">
-                  <p className="project-type">{current.type}</p>
-                  <h3>{current.title}</h3>
-                  <p className="project-tagline">{current.tagline}</p>
-                  <div className="project-tags">
-                    {current.stack.slice(0, 4).map((s) => (
-                      <span key={s} className="stack-tag-sm">{s}</span>
-                    ))}
-                    {current.stack.length > 4 && (
-                      <span className="stack-tag-sm">+{current.stack.length - 4}</span>
+                <header className="panel-head">
+                  <div className="panel-head-text">
+                    <h3 className="panel-title">{current.title}</h3>
+                    <p className="panel-tagline">{current.tagline}</p>
+                    <div className="panel-role">
+                      <span className="panel-role-label">Mon rôle</span>
+                      <span className="panel-role-value">{current.role}</span>
+                    </div>
+                  </div>
+                  <ProjectCover {...current.cover} />
+                </header>
+
+                <div className="panel-grid">
+                  <div className="panel-mod panel-mod-desc">
+                    <p className="panel-mod-label">Description</p>
+                    <p className="panel-desc">{current.description}</p>
+                  </div>
+
+                  <div className="panel-mod">
+                    <p className="panel-mod-label">Fonctionnalités clés</p>
+                    <ul className="panel-features">
+                      {current.features.map((f) => (
+                        <li key={f}>{f}</li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="panel-mod">
+                    <p className="panel-mod-label">Stack technique</p>
+                    <div className="panel-tags">
+                      {current.stack.map((s) => (
+                        <span key={s} className="stack-tag">{s}</span>
+                      ))}
+                    </div>
+                    {current.learning && (
+                      <>
+                        <p className="panel-mod-label panel-mod-label-spaced">
+                          Ce que j'ai appris
+                        </p>
+                        <p className="panel-learning">{current.learning}</p>
+                      </>
                     )}
                   </div>
                 </div>
-              </button>
-            </MotionDiv>
-          </AnimatePresence>
+              </MotionDiv>
+            </AnimatePresence>
+
+            <div className="panel-actions">
+              {current.story && (
+                <button
+                  type="button"
+                  className="panel-action"
+                  onClick={() => setStoryOpen(true)}
+                >
+                  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path d="M8 5.5v13l11-6.5z" />
+                  </svg>
+                  Démo interactive
+                </button>
+              )}
+              {current.github ? (
+                <a
+                  className="panel-action"
+                  href={current.github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56v-2c-3.2.7-3.87-1.36-3.87-1.36-.52-1.32-1.27-1.67-1.27-1.67-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.02 1.75 2.68 1.25 3.34.95.1-.74.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.46.11-3.05 0 0 .96-.31 3.15 1.18a10.98 10.98 0 0 1 5.74 0c2.19-1.49 3.15-1.18 3.15-1.18.62 1.59.23 2.76.11 3.05.74.81 1.18 1.84 1.18 3.1 0 4.43-2.69 5.41-5.26 5.69.41.36.78 1.06.78 2.13v3.16c0 .31.21.66.79.55C20.21 21.39 23.5 17.08 23.5 12 23.5 5.65 18.35.5 12 .5z" />
+                  </svg>
+                  Code source
+                </a>
+              ) : (
+                <span className="panel-action is-muted">Code privé — démo sur demande</span>
+              )}
+            </div>
+          </article>
         </div>
-
-        <button
-          type="button"
-          className="carousel-nav carousel-next"
-          onClick={goNext}
-          aria-label="Projet suivant"
-        >
-          <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" strokeWidth="1.6" fill="none" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M9 6l6 6-6 6" />
-          </svg>
-        </button>
-      </div>
-
-      <div className="carousel-dots" role="tablist" aria-label="Navigation projets">
-        {PROJECTS.map((p, i) => (
-          <button
-            key={p.id}
-            type="button"
-            role="tab"
-            aria-selected={i === currentIndex}
-            aria-label={`Voir ${p.title}`}
-            className={`carousel-dot ${i === currentIndex ? "active" : ""}`}
-            onClick={() => goTo(i)}
-          >
-            <span
-              className="carousel-dot-fill"
-              style={{
-                animationDuration: `${ROTATION_MS}ms`,
-                animationPlayState:
-                  i === currentIndex && !isPaused && !openProject ? "running" : "paused",
-              }}
-            />
-          </button>
-        ))}
       </div>
 
       <AnimatePresence>
-        {openProject && openProject.story ? (
-          // Démo interactive (séquence d'images + hotspots) si le projet
-          // déclare une `story`. Sinon → modal classique.
+        {storyOpen && current.story && (
           <ProjectStory
-            key={`story-${openProject.id}`}
-            project={openProject}
-            onClose={() => setOpenProject(null)}
+            key={`story-${current.id}`}
+            project={current}
+            onClose={() => setStoryOpen(false)}
           />
-        ) : (
-          openProject && (
-            <ProjectModal
-              key={`modal-${openProject.id}`}
-              project={openProject}
-              onClose={() => setOpenProject(null)}
-            />
-          )
         )}
       </AnimatePresence>
     </>

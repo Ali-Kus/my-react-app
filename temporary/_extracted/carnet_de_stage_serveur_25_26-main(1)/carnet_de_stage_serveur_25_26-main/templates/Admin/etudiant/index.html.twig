@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Etudiant index{% endblock %}
+
+{% block body %}
+    <h1>Etudiants
+        <a class="btn btn-primary btn-sm" href="{{ path('app_etudiant_new') }}"><i class="fa fa-plus"></i> ajouter</a>
+    </h1>
+
+    <table class="MyDataTable  table table-striped table-sm table-hover small">
+        <thead class="table-dark">
+            <tr>
+                <th>Id</th>
+                <th>NumeroINE</th>
+                <th>Nom</th>
+                <th>Prenom</th>
+                <th>Email</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for etudiant in etudiants %}
+                <tr>
+                    <td>{{ "%03d"|format(etudiant.id) }}</td>
+                    <td>{{ etudiant.numeroINE }}</td>
+                    <td>{{ etudiant.nom }}</td>
+                    <td>{{ etudiant.prenom }}</td>
+                    <td>{{ etudiant.email }}</td>
+                    <td>
+                        <a href="{{ path('app_etudiant_show', {'id': etudiant.id}) }}">voir</a>
+                        <a href="{{ path('app_etudiant_edit', {'id': etudiant.id}) }}">éditer</a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="6">Aucun Etudiant Inscrit</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

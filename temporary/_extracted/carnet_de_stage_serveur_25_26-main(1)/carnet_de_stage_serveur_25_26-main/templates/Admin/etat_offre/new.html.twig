@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouveau·elle EtatOffre{% endblock %}
+
+{% block body %}
+    <h1>Ajouter EtatOffre</h1>
+
+    {{ include('Admin/etat_offre/_form.html.twig') }}
+
+    <a href="{{ path('app_etat_offre_index') }}" class="btn btn-secondary col-md-1">Retour Liste</a>
+{% endblock %}

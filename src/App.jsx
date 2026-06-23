@@ -29,17 +29,19 @@ const Signature = ({ children, className = "" }) => {
 };
 
 // Stagger d'entrée pour les cartes contact : peak-end rule, on travaille le finale.
+// Offsets modérés et durée courte : avec le scroll-snap mandatory, une
+// entrée trop ample (y: 36, 0.85s) se superposait au settling du snap et
+// les cartes semblaient "trembler" au premier scroll vers le bas.
 const finaleContainerVariants = {
   hidden: {},
-  visible: { transition: { staggerChildren: 0.12, delayChildren: 0.1 } },
+  visible: { transition: { staggerChildren: 0.08, delayChildren: 0.05 } },
 };
 const finaleCardVariants = {
-  hidden: { opacity: 0, y: 36, scale: 0.96 },
+  hidden: { opacity: 0, y: 18 },
   visible: {
     opacity: 1,
     y: 0,
-    scale: 1,
-    transition: { duration: 0.85, ease: [0.22, 1, 0.36, 1] },
+    transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] },
   },
 };
 
@@ -107,11 +109,20 @@ function App() {
     if (!siteRevealed) return;
     const el = document.getElementById("contact");
     if (!el) return;
+    // Hystérésis : on s'allume à 55% visible, on s'éteint sous 30%. Avec un
+    // seuil unique (0.45), le ratio oscillait autour du seuil pendant le
+    // settling du scroll-snap → la classe clignotait et tout ce qui transite
+    // dessus (glow, vignette) tressautait.
     const obs = new IntersectionObserver(
       ([entry]) => {
-        document.body.classList.toggle("in-finale", entry.intersectionRatio > 0.45);
+        const r = entry.intersectionRatio;
+        if (r >= 0.55) {
+          document.body.classList.add("in-finale");
+        } else if (r <= 0.3) {
+          document.body.classList.remove("in-finale");
+        }
       },
-      { threshold: [0, 0.45, 0.7] },
+      { threshold: [0.3, 0.55] },
     );
     obs.observe(el);
     return () => obs.disconnect();
@@ -159,7 +170,7 @@ function App() {
 
                 <div className="status-pill">
                   <span className="status-dot" aria-hidden="true" />
-                  <span>En recherche — alternance septembre 2026 - juillet 2027</span>
+                  <span>Je suis disponible pour une alternance septembre 2026 - juillet 2027</span>
                 </div>
 
                 <h1 className="hero-name">
@@ -222,7 +233,7 @@ function App() {
                   variants={finaleContainerVariants}
                   initial="hidden"
                   whileInView="visible"
-                  viewport={{ once: true, amount: 0.35 }}
+                  viewport={{ once: true, amount: 0.2 }}
                 >
                   <MotionA
                     className="contact-card"

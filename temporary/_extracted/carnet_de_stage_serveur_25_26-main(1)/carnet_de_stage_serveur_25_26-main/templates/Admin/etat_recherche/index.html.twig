@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}EtatRecherche index{% endblock %}
+
+{% block body %}
+    <h1>Etats d'une Recherche de Stage
+        <a class="btn btn-primary btn-sm" href="{{ path('app_etat_recherche_new') }}"><i class="fa fa-plus"></i> ajouter</a>
+    </h1>
+
+    <table class="MyDataTable  table table-striped table-sm table-hover small">
+        <thead class="table-dark">
+            <tr>
+                <th>Id</th>
+                <th>Etat</th>
+                <th>Descriptif</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for etat_recherche in etat_recherches %}
+            <tr>
+                <td>{{ "%03d"|format(etat_recherche.id) }}</td>
+                <td>{{ etat_recherche.etat }}</td>
+                <td>{{ etat_recherche.descriptif }}</td>
+                <td>
+                    <a href="{{ path('app_etat_recherche_show', {'id': etat_recherche.id}) }}">voir</a>
+                    <a href="{{ path('app_etat_recherche_edit', {'id': etat_recherche.id}) }}">éditer</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">aucun enregistrement trouvé</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

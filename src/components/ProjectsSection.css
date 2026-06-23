@@ -1,211 +1,339 @@
 /* ============================================================
-   Projects — grille synthèse + modal cinématique.
+   Projects — rail de sélection à gauche, panneau charbon à
+   coins inversés à droite, sous une lumière chaude tamisée.
+
+   Coins inversés : le tab (haut-gauche) et la plaque d'actions
+   (bas-droite) sont des blocs de la MÊME couleur que le panneau,
+   posés hors de sa boîte. Les congés concaves qui les raccordent
+   sont peints par radial-gradient (transparent dans le quart de
+   cercle, charbon autour) → responsive, contrairement à un
+   clip-path: path() figé en pixels.
    ============================================================ */
 
 .section-intro {
   max-width: 640px;
-  margin: 0 0 40px;
+  margin: 0 0 36px;
   color: rgba(255, 255, 255, 0.7);
   font-size: 1.05rem;
 }
 
-/* ----- Carrousel projets ----------------------------------- */
-.project-carousel {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  max-width: 720px;
-  margin: 0 auto;
+.projects-shell {
+  display: grid;
+  grid-template-columns: minmax(240px, 300px) 1fr;
+  gap: 32px;
+  align-items: start;
 }
 
-.carousel-stage {
-  position: relative;
-  flex: 1;
-  min-width: 0;
-  /* Hauteur stable pour éviter les sauts entre projets */
-  min-height: 460px;
-  display: flex;
-  align-items: stretch;
-}
-
-.carousel-card-wrapper {
-  width: 100%;
-  display: flex;
-}
-
-.carousel-nav {
-  flex-shrink: 0;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.04);
-  color: rgba(255, 255, 255, 0.78);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
-}
-
-.carousel-nav:hover {
-  background: rgba(255, 68, 68, 0.12);
-  border-color: rgba(255, 68, 68, 0.45);
-  color: #fff;
-  transform: scale(1.05);
-}
-
-.carousel-nav:focus-visible {
-  outline: 2px solid rgba(255, 68, 68, 0.6);
-  outline-offset: 2px;
-}
-
-.project-card {
+/* ----- Rail gauche : liste éditoriale ----------------------- */
+.projects-rail {
   display: flex;
   flex-direction: column;
-  padding: 0;
-  width: 100%;
-  background: rgba(255, 255, 255, 0.025);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 16px;
-  overflow: hidden;
+}
+
+.projects-rail-item {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 15px 14px 15px 18px;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  font: inherit;
+  color: rgba(255, 255, 255, 0.58);
   text-align: left;
   cursor: pointer;
-  font: inherit;
-  color: inherit;
-  transition: transform 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
-  position: relative;
+  transition: color 0.25s ease, transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.project-card:hover {
-  transform: translateY(-4px);
-  border-color: rgba(255, 68, 68, 0.32);
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.32);
+.projects-rail-item:first-child {
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-.project-card:focus-visible {
-  outline: 2px solid rgba(255, 68, 68, 0.6);
-  outline-offset: 2px;
-}
-
-/* ----- Dots avec progression -------------------------------- */
-.carousel-dots {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin: 28px 0 0;
-}
-
-.carousel-dot {
-  position: relative;
-  width: 36px;
-  height: 4px;
-  padding: 0;
-  border: none;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.12);
-  cursor: pointer;
-  overflow: hidden;
-  transition: background 0.25s ease;
-}
-
-.carousel-dot:hover {
-  background: rgba(255, 255, 255, 0.22);
-}
-
-.carousel-dot:focus-visible {
-  outline: 2px solid rgba(255, 68, 68, 0.6);
-  outline-offset: 3px;
-}
-
-.carousel-dot.active {
-  background: rgba(255, 255, 255, 0.16);
-}
-
-.carousel-dot-fill {
+/* Barre accent : grandit depuis le haut quand l'item devient actif */
+.projects-rail-item::before {
+  content: '';
   position: absolute;
-  inset: 0;
-  width: 0%;
-  background: rgba(255, 68, 68, 0.85);
-  border-radius: 999px;
+  left: 0;
+  top: 22%;
+  bottom: 22%;
+  width: 2px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, #f5d58a, rgba(245, 213, 138, 0.15));
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.carousel-dot.active .carousel-dot-fill {
-  animation-name: carouselDotFill;
-  animation-timing-function: linear;
-  animation-fill-mode: forwards;
+.projects-rail-item:hover {
+  color: rgba(255, 255, 255, 0.92);
+  transform: translateX(4px);
 }
 
-@keyframes carouselDotFill {
-  from { width: 0%; }
-  to { width: 100%; }
+.projects-rail-item.is-active {
+  color: #fff;
+  transform: translateX(6px);
 }
 
-.project-card-body {
-  padding: 22px;
+.projects-rail-item.is-active::before {
+  transform: scaleY(1);
+}
+
+.projects-rail-item:focus-visible {
+  outline: 2px solid rgba(245, 213, 138, 0.6);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+.rail-index {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.32);
+  padding-top: 4px;
+  transition: color 0.25s ease;
+}
+
+.projects-rail-item.is-active .rail-index {
+  color: #f5d58a;
+}
+
+.rail-meta {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 2px;
+  min-width: 0;
 }
 
-.project-card .project-type {
-  font-size: 0.7rem;
+.rail-title {
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: rgba(255, 68, 68, 0.85);
-  margin: 0;
-}
-
-.project-card h3 {
-  margin: 0;
-  font-size: 1.15rem;
-  font-weight: 600;
-  color: #fff;
+  font-size: 0.98rem;
   letter-spacing: -0.01em;
 }
 
-.project-tagline {
-  margin: 0;
-  font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.65);
-  line-height: 1.5;
-}
-
-.project-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 8px;
-}
-
-/* ----- Tags stack ------------------------------------------ */
-.stack-tag-sm,
-.stack-tag {
-  display: inline-block;
-  font-weight: 500;
-  letter-spacing: 0.02em;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 999px;
-  color: rgba(255, 255, 255, 0.78);
-  white-space: nowrap;
-}
-
-.stack-tag-sm {
-  padding: 4px 10px;
-  font-size: 0.7rem;
-}
-
-.stack-tag {
-  padding: 6px 14px;
+.rail-sub {
   font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.4);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-/* ----- Cover artistique (placeholder en attendant les SS) -- */
+/* ----- Panneau charbon --------------------------------------- */
+.project-panel-wrap {
+  /* Réserve l'espace que le tab (haut) et la plaque (bas) occupent
+     hors de la boîte du panneau. */
+  padding-top: 44px;
+  padding-bottom: 58px;
+  min-width: 0;
+}
+
+.project-panel {
+  --coal: #151318;
+  --notch: 18px;
+  position: relative;
+  /* Lumière tamisée : un halo chaud descend du coin haut-droit,
+     loin du tab pour que le raccord tab/panneau reste invisible. */
+  background:
+    radial-gradient(900px 420px at 82% -12%, rgba(255, 205, 140, 0.07), transparent 60%)
+    var(--coal);
+  border-radius: 26px;
+  border-top-left-radius: 0;
+  border-bottom-right-radius: 0;
+  padding: 26px 28px 28px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+}
+
+/* Tab haut-gauche : numéro + type de projet */
+.panel-tab {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  height: 44px;
+  max-width: calc(100% - 40px);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 24px;
+  background: var(--coal);
+  border-radius: 20px 20px 0 0;
+}
+
+/* Congé concave à droite du tab */
+.panel-tab::after {
+  content: '';
+  position: absolute;
+  left: 100%;
+  bottom: 0;
+  width: var(--notch);
+  height: var(--notch);
+  background: radial-gradient(
+    circle var(--notch) at 100% 0,
+    transparent calc(var(--notch) - 0.5px),
+    var(--coal) var(--notch)
+  );
+}
+
+.panel-tab-index {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #f5d58a;
+}
+
+.panel-tab-type {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: rgba(255, 255, 255, 0.55);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Plaque d'actions bas-droite */
+.panel-actions {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  max-width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: var(--coal);
+  border-radius: 0 0 20px 20px;
+}
+
+/* Congé concave à gauche de la plaque */
+.panel-actions::before {
+  content: '';
+  position: absolute;
+  right: 100%;
+  top: 0;
+  width: var(--notch);
+  height: var(--notch);
+  background: radial-gradient(
+    circle var(--notch) at 0 100%,
+    transparent calc(var(--notch) - 0.5px),
+    var(--coal) var(--notch)
+  );
+}
+
+.panel-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 18px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.88);
+  font: inherit;
+  font-size: 0.85rem;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease,
+    transform 0.25s ease;
+}
+
+.panel-action svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
+
+.panel-action:hover {
+  background: rgba(245, 213, 138, 0.12);
+  border-color: rgba(245, 213, 138, 0.4);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.panel-action:focus-visible {
+  outline: 2px solid rgba(245, 213, 138, 0.6);
+  outline-offset: 2px;
+}
+
+.panel-action.is-muted {
+  background: transparent;
+  border-style: dashed;
+  color: rgba(255, 255, 255, 0.45);
+  cursor: default;
+}
+
+.panel-action.is-muted:hover {
+  transform: none;
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.45);
+}
+
+/* ----- Contenu du panneau ------------------------------------ */
+.panel-head {
+  display: flex;
+  align-items: stretch;
+  gap: 26px;
+  margin-bottom: 20px;
+}
+
+.panel-head-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.panel-title {
+  margin: 0 0 8px;
+  font-size: clamp(1.6rem, 2.6vw, 2.1rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #fff;
+}
+
+.panel-tagline {
+  margin: 0 0 18px;
+  font-size: 1.02rem;
+  color: rgba(255, 255, 255, 0.66);
+  line-height: 1.55;
+}
+
+.panel-role {
+  margin-top: auto;
+  align-self: flex-start;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 12px 16px;
+  background: rgba(245, 213, 138, 0.05);
+  border-left: 2px solid rgba(245, 213, 138, 0.55);
+  border-radius: 4px;
+}
+
+.panel-role-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: rgba(245, 213, 138, 0.85);
+}
+
+.panel-role-value {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+/* Cover placeholder (gradient + initiales) en attendant les captures */
 .project-cover {
+  width: clamp(220px, 32%, 340px);
+  flex-shrink: 0;
   aspect-ratio: 16 / 10;
+  border-radius: 18px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -233,246 +361,208 @@
   position: relative;
   z-index: 1;
   font-family: "Space Grotesk", sans-serif;
-  font-size: clamp(2.2rem, 6vw, 3.6rem);
+  font-size: clamp(2.2rem, 4vw, 3.2rem);
   font-weight: 700;
   letter-spacing: -0.04em;
   color: rgba(255, 255, 255, 0.92);
   text-shadow: 0 2px 16px rgba(0, 0, 0, 0.35);
 }
 
-.project-cover-lg {
-  aspect-ratio: 16 / 8;
+/* Bento interne : description (large) + fonctionnalités + stack */
+.panel-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr;
+  gap: 14px;
 }
 
-.project-cover-lg .project-cover-initials {
-  font-size: clamp(3rem, 8vw, 5rem);
+.panel-mod {
+  min-width: 0;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  padding: 18px 20px;
 }
 
-/* ----- Modal détail ---------------------------------------- */
-.project-modal-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(8, 7, 10, 0.72);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  z-index: 1000;
-  padding: 32px 16px;
-  overflow-y: auto;
-}
-
-.project-modal {
-  position: relative;
-  width: 100%;
-  max-width: 760px;
-  background: linear-gradient(180deg, rgba(20, 18, 24, 0.96), rgba(12, 10, 16, 0.99));
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 22px;
-  overflow: hidden;
-  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.55);
-  margin: auto;
-}
-
-.project-modal-close {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(0, 0, 0, 0.5);
-  color: rgba(255, 255, 255, 0.85);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 2;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  transition: background 0.25s ease, color 0.25s ease, transform 0.25s ease;
-}
-
-.project-modal-close:hover {
-  background: rgba(0, 0, 0, 0.7);
-  color: #fff;
-  transform: rotate(90deg);
-}
-
-.project-modal-close:focus-visible {
-  outline: 2px solid rgba(255, 68, 68, 0.6);
-  outline-offset: 2px;
-}
-
-.project-modal-content {
-  padding: 32px;
-}
-
-.project-modal-content .project-type {
-  font-size: 0.78rem;
+.panel-mod-label {
+  margin: 0 0 12px;
+  font-size: 0.68rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: rgba(255, 68, 68, 0.9);
-  margin: 0 0 8px;
+  letter-spacing: 0.15em;
+  color: rgba(255, 255, 255, 0.42);
 }
 
-.project-modal-content h3 {
-  margin: 0 0 4px;
-  font-size: clamp(1.5rem, 3.5vw, 2rem);
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  color: #fff;
+.panel-mod-label-spaced {
+  margin-top: 18px;
 }
 
-.project-subtitle-text {
-  margin: 0 0 24px;
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 1rem;
-}
-
-/* Bandeau "Mon rôle" : preuve de spécificité, important quand on bosse en équipe */
-.project-role-strip {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 14px 18px;
-  background: rgba(255, 68, 68, 0.06);
-  border-left: 2px solid rgba(255, 68, 68, 0.5);
-  border-radius: 4px;
-  margin: 0 0 24px;
-}
-
-.project-role-label {
-  font-size: 0.7rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: rgba(255, 68, 68, 0.9);
-}
-
-.project-role-value {
-  font-size: 1rem;
-  color: rgba(255, 255, 255, 0.94);
-}
-
-.project-modal-content p {
-  color: rgba(255, 255, 255, 0.76);
-  line-height: 1.65;
-  margin: 0 0 16px;
-}
-
-.project-modal-content .project-subtitle {
+.panel-desc {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.72);
+  line-height: 1.7;
   font-size: 0.95rem;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.92);
-  margin: 24px 0 10px;
 }
 
-.project-modal-content ul {
-  margin: 0 0 20px;
-  padding-left: 20px;
+.panel-features {
+  margin: 0;
+  padding: 0;
   list-style: none;
+  display: grid;
+  gap: 10px;
 }
 
-.project-modal-content ul li {
+.panel-features li {
   position: relative;
-  padding-left: 16px;
-  margin-bottom: 8px;
-  color: rgba(255, 255, 255, 0.74);
-  line-height: 1.6;
+  padding-left: 18px;
+  color: rgba(255, 255, 255, 0.72);
+  line-height: 1.5;
+  font-size: 0.92rem;
 }
 
-.project-modal-content ul li::before {
+.panel-features li::before {
   content: '›';
   position: absolute;
   left: 0;
-  color: rgba(255, 68, 68, 0.85);
-  font-weight: bold;
-  font-size: 1.2em;
+  color: rgba(245, 213, 138, 0.85);
+  font-weight: 700;
+  font-size: 1.1em;
 }
 
-.project-stack-modal {
+.panel-tags {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin: 4px 0 24px;
 }
 
-.project-modal-content .project-learning {
-  font-style: italic;
-  color: rgba(255, 255, 255, 0.7);
-  border-left: 2px solid rgba(255, 68, 68, 0.5);
-  padding: 4px 0 4px 14px;
-  margin: 24px 0 0;
-  font-size: 0.95rem;
-}
-
-.project-link {
+.stack-tag {
   display: inline-block;
-  margin-top: 24px;
-  padding: 10px 22px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 6px 14px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 999px;
-  color: #fff;
-  text-decoration: none;
+  color: rgba(255, 255, 255, 0.78);
+  white-space: nowrap;
+}
+
+.panel-learning {
+  margin: 0;
+  font-style: italic;
   font-size: 0.9rem;
-  transition: background 0.25s ease, transform 0.25s ease;
+  color: rgba(255, 255, 255, 0.62);
+  line-height: 1.6;
+  border-left: 2px solid rgba(245, 213, 138, 0.35);
+  padding-left: 12px;
 }
 
-.project-link:hover {
-  background: rgba(255, 68, 68, 0.15);
-  transform: translateX(4px);
+/* ----- Responsive -------------------------------------------- */
+@media (max-width: 1180px) {
+  .panel-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .panel-mod-desc {
+    grid-column: 1 / -1;
+  }
 }
 
-@media (max-width: 768px) {
-  .project-carousel {
-    gap: 6px;
+@media (max-width: 980px) {
+  .projects-shell {
+    grid-template-columns: 1fr;
+    gap: 18px;
   }
 
-  .carousel-nav {
-    width: 36px;
-    height: 36px;
-    flex-shrink: 0;
+  /* Le rail devient une rangée de pilules scrollable */
+  .projects-rail {
+    flex-direction: row;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+    scrollbar-width: none;
   }
 
-  /* On laisse le contenu dicter la hauteur sur mobile au lieu d'un min-height
-     rigide. Évite les viewports d'iPhone SE qui n'arrivaient pas à contenir
-     la carte + le hero + la nav dans 667px de haut. */
-  .carousel-stage {
-    min-height: 0;
+  .projects-rail::-webkit-scrollbar {
+    display: none;
   }
 
-  /* Cover d'image rétrécie pour libérer de la hauteur */
-  .project-card .project-cover {
+  .projects-rail-item,
+  .projects-rail-item:first-child {
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 16px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.03);
+  }
+
+  .projects-rail-item::before {
+    display: none;
+  }
+
+  .projects-rail-item:hover,
+  .projects-rail-item.is-active {
+    transform: none;
+  }
+
+  .projects-rail-item.is-active {
+    background: rgba(245, 213, 138, 0.08);
+    border-color: rgba(245, 213, 138, 0.35);
+  }
+
+  .rail-index {
+    padding-top: 0;
+  }
+
+  .rail-sub {
+    display: none;
+  }
+
+  .panel-head {
+    flex-direction: column-reverse;
+    gap: 18px;
+  }
+
+  .project-cover {
+    width: 100%;
     aspect-ratio: 16 / 9;
   }
+}
 
-  .project-card-body {
-    padding: 18px;
-    gap: 6px;
+@media (max-width: 760px) {
+  .panel-grid {
+    grid-template-columns: 1fr;
   }
 
-  .project-card-body h3 {
-    font-size: 1.05rem;
+  .project-panel {
+    padding: 20px 18px 22px;
+    /* La plaque d'actions repasse dans le flux → on referme le coin */
+    border-bottom-right-radius: 26px;
   }
 
-  .project-tagline {
-    font-size: 0.85rem;
+  .project-panel-wrap {
+    padding-top: 38px;
+    padding-bottom: 0;
   }
 
-  .carousel-dots {
+  .panel-tab {
+    height: 38px;
+    gap: 8px;
+    padding: 0 16px;
+  }
+
+  .panel-actions {
+    position: static;
     margin-top: 18px;
+    padding: 0;
+    background: transparent;
+    border-radius: 0;
+    flex-wrap: wrap;
   }
 
-  .project-modal-content {
-    padding: 24px 20px;
-  }
-
-  .project-modal-backdrop {
-    padding: 16px 12px;
+  .panel-actions::before {
+    display: none;
   }
 }

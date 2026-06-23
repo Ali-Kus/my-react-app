@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}EtatCandidature index{% endblock %}
+
+{% block body %}
+    <h1>
+        Etats d'une Candidature
+        <a class="btn btn-primary btn-sm" href="{{ path('app_etat_candidature_new') }}"><i class="fa fa-plus"></i> ajouter</a>
+    </h1>
+
+    <table class="MyDataTable  table table-striped table-sm table-hover small">
+        <thead class="table-dark">
+            <tr>
+                <th>Id</th>
+                <th>Etat</th>
+                <th>Descriptif</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for etat_candidature in etat_candidatures %}
+                <tr>
+                    <td>{{ "%03d"|format(etat_candidature.id) }}</td>
+                    <td>{{ etat_candidature.etat }}</td>
+                    <td>{{ etat_candidature.descriptif }}</td>
+                    <td>
+                        <a href="{{ path('app_etat_candidature_show', {'id': etat_candidature.id}) }}">voir</a>
+                        <a href="{{ path('app_etat_candidature_edit', {'id': etat_candidature.id}) }}">éditer</a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="4">aucun enregistrement trouvé</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

@@ -266,6 +266,16 @@ section > *:not(.section-number) {
   }
 }
 
+/* ============================================
+   PROJECTS — la section déborde du gabarit 980px :
+   pas de pub, pas de raison de gâcher l'espace. Les
+   marges restent cohérentes (mêmes 24px de respiration
+   aux bords) mais le plafond passe à 1320px.
+   ============================================ */
+#projects {
+  width: min(1320px, calc(100% - 48px));
+}
+
 /* About Section */
 #about ul {
   list-style: none;
@@ -391,15 +401,10 @@ body.in-finale .finale-vignette {
   scroll-margin-bottom: 220px;
 }
 
-/* Pendant le finale, le bloc cartes prend une présence supplémentaire :
-   léger zoom + lift, comme si on s'avançait pour conclure une conversation. */
-#contact .contact-grid {
-  transition: transform 1.1s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-body.in-finale #contact .contact-grid {
-  transform: scale(1.025);
-}
+/* (le scale(1.025) du .contact-grid en finale a été retiré : il se déclenchait
+   pendant que les cartes animaient leur entrée ET que le snap se stabilisait
+   → trois mouvements superposés, perçus comme un tremblement. Le glow et le
+   vignettage suffisent à marquer le finale.) */
 
 #contact h2 {
   display: inline-block;

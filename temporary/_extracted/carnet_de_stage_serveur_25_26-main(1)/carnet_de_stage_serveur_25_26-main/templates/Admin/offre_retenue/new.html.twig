@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouveau·elle OffreRetenue{% endblock %}
+
+{% block body %}
+    <h1>Ajouter OffreRetenue</h1>
+
+    {{ include('Admin/offre_retenue/_form.html.twig') }}
+
+    <a href="{{ path('app_offre_retenue_index') }}" class="btn btn-secondary col-md-1">Retour Liste</a>
+{% endblock %}

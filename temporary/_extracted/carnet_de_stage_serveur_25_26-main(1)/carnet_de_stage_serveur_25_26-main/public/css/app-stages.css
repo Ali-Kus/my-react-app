@@ -1,0 +1,96 @@
+body {
+    padding-top: 5rem;
+    background-color: #fff;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+.main-div {
+    padding: 10px;
+}
+
+th , td {
+    vertical-align: middle !important;
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
+}
+
+.clickable:hover {
+    border-width: 3px;
+    border-color: #0069D9;
+    cursor: pointer;
+    background-color: white;
+}
+
+.card-img {
+    height: 300px;
+    width: auto;
+    display: block;
+    margin-top: 10px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.info-div {
+    display: table !important;
+}
+
+.dataTables_info {
+    display: table-cell !important;
+    vertical-align: middle !important;
+    padding-top: 0px !important;
+}
+
+.dataTables_length , .dataTables_filter {
+    text-align: right !important;
+    font-style: italic !important;
+    font-size: small !important;
+    margin-top: -3px !important;
+}
+
+.dataTables_info, div.dt-buttons > button {
+    font-style: italic !important;
+    font-size: small !important;
+}
+
+.dataTables_filter  {
+    text-align : left !important;
+    font-style: italic !important;
+    font-size: small !important;
+    margin-top: -3px !important;
+}
+
+.dataTables_paginate  {
+    text-align : center !important;
+    font-style: italic !important;
+    font-size: small !important;
+}
+
+a.page-link {
+    font-size: small !important;
+    margin-top: -4px !important;
+}
+
+ul.pagination {
+    text-align: left !important;
+    margin: 0px !important;
+}
+
+.datatable-dom {
+    display: flex;
+    align-items: center;
+    margin: 5px 0px 5px 0px;
+    padding: 4px 0px 0px 0px;
+}
+
+a.page-link {
+    padding: 4px 10px 4px 10px;
+}
+
+.fluo:hover, .hovered {
+    background-color:#FFFF00;
+    color: #000000;
+    cursor: pointer;
+}

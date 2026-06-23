@@ -1,0 +1,44 @@
+services:
+###> doctrine/doctrine-bundle ###
+  database:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: app-stages
+      # You should definitely change the password in production
+      POSTGRES_PASSWORD: app-stages
+      POSTGRES_USER: app-stages
+    ports:
+      - "5432:5432"  # Port local aléatoire ou fixe
+    volumes:
+      - db-data:/var/lib/postgresql
+      # You may use a bind-mounted host directory instead, so that it is harder to accidentally remove the volume and lose all your data!
+      # - ./docker/db/data:/var/lib/postgresql/data:rw
+###< doctrine/doctrine-bundle ###
+
+volumes:
+###> doctrine/doctrine-bundle ###
+  db-data:
+###< doctrine/doctrine-bundle ###
+
+##############################################################################################
+### Utilisation de Docker
+##############################################################################################
+
+### Créer et Lancer le conteneur
+### docker compose up -d
+
+### Lancer le conteneur
+### docker compose start
+
+### Peupler la BD
+### docker cp ./dump_BD.sql bo-stages-database-1:/tmp
+### docker exec -it bo-stages-database-1 psql -U app-stages -d postgres -f /tmp/dump_BD.sql
+
+### Arrêter les conteneurs en les conservants
+### docker compose stop
+
+### Arrêter le conteneur et supprimer son volume mais en gardant les données de la BD
+### docker compose down
+
+### Arrêter les conteneurs et tout supprimer ??
+### docker compose down -v

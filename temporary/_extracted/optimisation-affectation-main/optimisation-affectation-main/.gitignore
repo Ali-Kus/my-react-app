@@ -1,0 +1,8 @@
+# Rendered files
+*_files/
+*_cache/
+*.tex
+*.aux
+*.log
+*.pdf
+*.html

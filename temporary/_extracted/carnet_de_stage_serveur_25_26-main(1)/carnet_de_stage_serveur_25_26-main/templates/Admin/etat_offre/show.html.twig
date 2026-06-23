@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}EtatOffre{% endblock %}
+
+{% block body %}
+    <h1>EtatOffre</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ etat_offre.id }}</td>
+            </tr>
+            <tr>
+                <th>Etat</th>
+                <td>{{ etat_offre.etat }}</td>
+            </tr>
+            <tr>
+                <th>Descriptif</th>
+                <td>{{ etat_offre.descriptif }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_etat_offre_index') }}" class="btn btn-secondary col-md-1">Retour Liste</a>
+
+    <a href="{{ path('app_etat_offre_edit', {'id': etat_offre.id}) }}" class="btn btn-primary col-md-1">Editer</a>
+
+    {{ include('Admin/etat_offre/_delete_form.html.twig') }}
+{% endblock %}

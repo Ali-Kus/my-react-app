@@ -10,11 +10,12 @@
   <a href="README.en.md"><img src="https://img.shields.io/badge/English-2d2d3a?style=for-the-badge" alt="English"/></a>
   <a href="README.tr.md"><img src="https://img.shields.io/badge/T%C3%BCrk%C3%A7e-2d2d3a?style=for-the-badge" alt="Türkçe"/></a>
   <a href="README.ru.md"><img src="https://img.shields.io/badge/%D0%A0%D1%83%D1%81%D1%81%D0%BA%D0%B8%D0%B9-2d2d3a?style=for-the-badge" alt="Русский"/></a>
+  <a href="README.kz.md"><img src="https://img.shields.io/badge/%D2%9A%D0%B0%D0%B7%D0%B0%D2%9B%D1%88%D0%B0-2d2d3a?style=for-the-badge" alt="Қазақша"/></a>
 </p>
 
 <!-- ░░░ BANNIÈRE ANIMÉE (SVG fait main) ░░░ -->
 <p align="center">
-  <img src="./assets/banner.svg" alt="Ali Kus — Développeur Full-Stack" width="100%"/>
+  <img src="./assets/banner_origin_v2.svg" alt="Ali Kus — Développeur Full-Stack" width="100%"/>
 </p>
 
 ---

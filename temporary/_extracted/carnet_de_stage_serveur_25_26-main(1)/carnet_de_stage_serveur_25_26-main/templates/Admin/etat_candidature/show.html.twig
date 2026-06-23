@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}EtatCandidature{% endblock %}
+
+{% block body %}
+    <h1>EtatCandidature</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ etat_candidature.id }}</td>
+            </tr>
+            <tr>
+                <th>Etat</th>
+                <td>{{ etat_candidature.etat }}</td>
+            </tr>
+            <tr>
+                <th>Descriptif</th>
+                <td>{{ etat_candidature.descriptif }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_etat_candidature_index') }}" class="btn btn-secondary col-md-1">Retour Liste</a>
+
+    <a href="{{ path('app_etat_candidature_edit', {'id': etat_candidature.id}) }}" class="btn btn-primary col-md-1">Editer</a>
+
+    {{ include('Admin/etat_candidature/_delete_form.html.twig') }}
+{% endblock %}

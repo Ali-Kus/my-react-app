@@ -1,0 +1,75 @@
+security:
+    enable_authenticator_manager: true
+    # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
+    password_hashers:
+        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
+    # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
+    providers:
+        # used to reload user from session & other features (e.g. switch_user)
+        app_user_provider:
+            entity:
+                class: App\Entity\CompteEtudiant
+                property: login
+    role_hierarchy:
+        ROLE_ADMIN:
+        ROLE_ETUDIANT:
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+        api:
+            pattern: ^/api/
+            stateless: true
+            provider: app_user_provider
+            jwt: ~
+            json_login:
+                check_path: api_auth # The name in routes.yaml is enough for mapping
+                username_path: login
+                password_path: password
+                success_handler: lexik_jwt_authentication.handler.authentication_success
+                failure_handler: lexik_jwt_authentication.handler.authentication_failure
+        main:
+            lazy: true
+            provider: app_user_provider
+            custom_authenticator: App\Security\LoginFormAuthenticator
+            entry_point: App\Security\LoginFormAuthenticator
+            logout:
+                path: app_logout
+                target: app_default
+
+            # activate different ways to authenticate
+            # https://symfony.com/doc/current/security.html#the-firewall
+
+            # https://symfony.com/doc/current/security/impersonating_user.html
+            # switch_user: true
+
+    # Easy way to control access for large sections of your site
+    # Note: Only the *first* access control that matches will be used
+    access_control:
+        # Il faut être ADMIN pour accéder aux URL qui commencent par /admin
+        - { path: ^/admin, roles: ROLE_ADMIN }
+        # Il faut être ETUDIANT pour accéder aux URL qui commencent par /etudiant
+        - { path: ^/etudiant, roles: ROLE_ETUDIANT }
+        # L'accès à la doc de l'API et à l'URL d'authentification est publique
+        - { path: ^/api/$, roles: PUBLIC_ACCESS }
+        - { path: ^/api/docs, roles: PUBLIC_ACCESS }
+        - { path: ^/api/auth, roles: PUBLIC_ACCESS }
+        # Il faut être ADMIN pour POST ou DELETE les entites ci-dessous via l'API REST
+        - { path: ^/api/(compte_etudiants|entreprises|etat_candidatures|etat_offres|etat_recherches|etudiants|offres), roles: ROLE_ADMIN, methods: [POST, DELETE, PUT, PATCH] }
+        # Il faut être ADMIN pour PUT ou PATCH les entites ci-dessous via l'API REST
+        - { path: ^/api/(entreprises|etat_candidatures|etat_offres|etat_recherches|offres), roles: ROLE_ADMIN, methods: [PUT, PATCH] }
+        # Il faut être authentifié pour toutes les autres opérations de l'API REST
+        - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
+
+when@test:
+    security:
+        password_hashers:
+            # By default, password hashers are resource intensive and take time. This is
+            # important to generate secure password hashes. In tests however, secure hashes
+            # are not important, waste resources and increase test times. The following
+            # reduces the work factor to the lowest possible values.
+            Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface:
+                algorithm: auto
+                cost: 4 # Lowest possible value for bcrypt
+                time_cost: 3 # Lowest possible value for argon
+                memory_cost: 10 # Lowest possible value for argon

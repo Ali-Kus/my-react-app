@@ -10,6 +10,15 @@ export function smoothScrollTo(targetY, duration = 1100) {
   const distance = targetY - startY;
   if (Math.abs(distance) < 1) return;
 
+  // ⚠️ scroll-snap-type: y mandatory (+ scroll-snap-stop: always) recrante la
+  // page sur CHAQUE section traversée pendant qu'on scrolle frame par frame →
+  // bagarre avec l'animation = défilement saccadé sur un saut long (ex: 1→4).
+  // On coupe le snap le temps de l'animation, on le rétablit à l'arrivée : la
+  // cible étant déjà centrée, le re-snap final est invisible.
+  const root = document.documentElement;
+  const prevSnap = root.style.scrollSnapType;
+  root.style.scrollSnapType = "none";
+
   const startTime = performance.now();
 
   function step(now) {
@@ -18,7 +27,11 @@ export function smoothScrollTo(targetY, duration = 1100) {
     // behavior: 'instant' évite que le scroll-behavior:smooth global
     // ne re-lisse chaque frame et casse l'animation.
     window.scrollTo({ top: startY + distance * easeInOutQuart(t), behavior: "instant" });
-    if (t < 1) requestAnimationFrame(step);
+    if (t < 1) {
+      requestAnimationFrame(step);
+    } else {
+      root.style.scrollSnapType = prevSnap;
+    }
   }
   requestAnimationFrame(step);
 }

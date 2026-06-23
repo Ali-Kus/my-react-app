@@ -1,0 +1,153 @@
+/* =============================================================================
+   LABS — feuille de style cloisonnée. Tout est préfixé `.labs-` pour ne jamais
+   marcher sur le portfolio (App.css reste chargé globalement).
+
+   Parti pris : un seul écran, zéro scroll. Le mur d'essais remplit tout
+   l'espace ; chaque tuile s'agrandit au survol.
+   ============================================================================= */
+
+.labs-root {
+  position: relative;
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* un seul écran : pas de scroll */
+  color: rgba(255, 255, 255, 0.92);
+  font-family: inherit;
+  background:
+    radial-gradient(900px 600px at 12% -5%, rgba(71, 68, 255, 0.18), transparent 60%),
+    radial-gradient(800px 600px at 95% 8%, rgba(0, 173, 204, 0.16), transparent 60%);
+}
+
+/* --- Pilule logo (copie 1:1 du portfolio), haut-gauche, retour accueil --- */
+.labs-logo {
+  position: fixed;
+  top: 18px;
+  left: 18px;
+  z-index: 100;
+  width: 158px;
+  height: 41px;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 135px;
+  background: rgba(255, 255, 255, 0.06);
+  -webkit-backdrop-filter: blur(22px) saturate(180%);
+  backdrop-filter: blur(22px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    0 8px 28px rgba(0, 0, 0, 0.28);
+  cursor: pointer;
+  transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 220ms ease;
+}
+.labs-logo:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    0 12px 34px rgba(0, 0, 0, 0.34);
+}
+.labs-logo img {
+  max-width: 100%;
+  max-height: 100%;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* --- Bandeau compact : on garde le titre minuscule pour laisser la place --- */
+.labs-bar {
+  flex: 0 0 auto;
+  padding: 16px 24px 10px 200px; /* on dégage la largeur de la pilule logo */
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.labs-title {
+  margin: 0;
+  font-size: clamp(1.1rem, 2.4vw, 1.6rem);
+  font-weight: 700;
+  line-height: 1;
+  background: linear-gradient(135deg, #fff 0%, #9aa 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+.labs-hint {
+  margin: 0;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* --- Le mur : occupe tout le reste de l'écran --- */
+.labs-wall {
+  flex: 1 1 auto;
+  min-height: 0; /* indispensable pour que la grille puisse tenir dans le flex */
+  padding: 8px 14px 14px;
+}
+
+.labs-empty {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Grille calculée en JS (cols × rows) pour remplir pile l'espace, sans scroll. */
+.labs-mosaic {
+  height: 100%;
+  width: 100%;
+  display: grid;
+  gap: 6px;
+}
+
+/* Une tuile = une œuvre, sur passe-partout clair pour faire ressortir aussi
+   bien les traits noirs (SVG « Stroke ») que les visuels clairs. */
+.labs-tile {
+  position: relative;
+  margin: 0;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  border-radius: 10px;
+  background: radial-gradient(120% 120% at 50% 0%, #fbfaf7 0%, #ece8e1 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.28);
+  cursor: none; /* la lame de feu fait office de curseur */
+  transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 260ms ease, z-index 0ms;
+  will-change: transform;
+}
+
+.labs-art {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+/* Survol : la tuile bondit au-dessus de ses voisines. */
+.labs-tile:hover {
+  transform: scale(2.3);
+  z-index: 50;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .labs-logo,
+  .labs-tile {
+    transition: none;
+  }
+  /* On garde l'agrandissement (utile), juste sans animation. */
+}

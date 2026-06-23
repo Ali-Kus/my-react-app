@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}OffreConsultee index{% endblock %}
+
+{% block body %}
+    <h1>Offres de Stage Consultees
+        <a class="btn btn-primary btn-sm" href="{{ path('app_offre_consultee_new') }}"><i class="fa fa-plus"></i> ajouter</a>
+    </h1>
+
+    <table class="MyDataTable  table table-striped table-sm table-hover small">
+        <thead class="table-dark">
+            <tr>
+                <th>Id</th>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>Parcours</th>
+                <th>Entreprise</th>
+                <th>Offre</th>
+                <th>Parcours</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for offre_consultee in offre_consultees %}
+            <tr>
+                <td>{{ "%03d"|format(offre_consultee.id) }}</td>
+                <td><a target="_blank" href="{{ path("app_etudiant_show",{'id':offre_consultee.compteEtudiant.etudiant.id}) }}">{{ offre_consultee.compteEtudiant.etudiant.nom }}</a></td>
+                <td>{{ offre_consultee.compteEtudiant.etudiant.prenom }}</td>
+                <td>{{ offre_consultee.compteEtudiant.parcours }}</td>
+                <td><a target="_blank" href="{{ path("app_entreprise_show",{'id':offre_consultee.offre.entreprise.id}) }}">{{ offre_consultee.offre.entreprise.raisonSociale }}</a></td>
+                <td><a target="_blank" href="{{ path("app_offre_show",{'id':offre_consultee.offre.id}) }}">{{ offre_consultee.offre.intitule }}</a></td>
+                <td>{{ offre_consultee.offre.parcours }}</td>
+                <td>
+                    <a href="{{ path('app_offre_consultee_show', {'id': offre_consultee.id }) }}">voir</a>
+                    <a href="{{ path('app_offre_consultee_edit', {'id': offre_consultee.id }) }}">éditer</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="8">aucun enregistrement trouvé</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

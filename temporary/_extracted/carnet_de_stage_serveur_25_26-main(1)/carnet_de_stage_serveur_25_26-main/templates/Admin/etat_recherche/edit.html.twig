@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit EtatRecherche{% endblock %}
+
+{% block body %}
+    <h1>Editer EtatRecherche</h1>
+
+    {{ include('Admin/etat_recherche/_form.html.twig', {'button_label': 'Enregistrer'}) }}
+
+    <a href="{{ path('app_etat_recherche_index') }}" class="btn btn-secondary col-md-1">Retour Liste</a>
+
+    {{ include('Admin/etat_recherche/_delete_form.html.twig') }}
+{% endblock %}
