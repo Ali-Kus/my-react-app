@@ -1,0 +1,287 @@
+/* ============================================================
+   Projets — vue SYNTHÈSE (grille de cartes sur la home).
+   Un clic ouvre la page détaillée /projets. Accent doré, en
+   cohérence avec le reste du portfolio.
+   ============================================================ */
+
+.summary-intro {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+  margin-bottom: 28px;
+}
+
+.summary-lead {
+  max-width: 560px;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+
+.summary-all {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: rgba(245, 213, 138, 0.06);
+  border: 1px solid rgba(245, 213, 138, 0.28);
+  color: #f5d58a;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+}
+
+.summary-all svg {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.25s ease;
+}
+
+.summary-all:hover {
+  background: rgba(245, 213, 138, 0.12);
+  border-color: rgba(245, 213, 138, 0.5);
+  transform: translateY(-1px);
+}
+
+.summary-all:hover svg {
+  transform: translateX(3px);
+}
+
+.summary-all:focus-visible {
+  outline: 2px solid rgba(245, 213, 138, 0.6);
+  outline-offset: 2px;
+}
+
+/* ----- Grille ------------------------------------------------ */
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(248px, 1fr));
+  gap: 16px;
+}
+
+.summary-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+  padding: 18px 18px 16px;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 18px;
+  color: #fff;
+  /* halo chaud très discret qui s'allume au survol (cf. ::before) */
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.3s ease, transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.35s ease;
+}
+
+.summary-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    420px 220px at 85% -20%,
+    rgba(245, 213, 138, 0.1),
+    transparent 60%
+  );
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+}
+
+.summary-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(245, 213, 138, 0.32);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+}
+
+.summary-card:hover::before {
+  opacity: 1;
+}
+
+.summary-card:focus-visible {
+  outline: 2px solid rgba(245, 213, 138, 0.6);
+  outline-offset: 2px;
+}
+
+.summary-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.summary-badge {
+  width: 46px;
+  height: 46px;
+  flex: 0 0 46px;
+  border-radius: 13px;
+  display: grid;
+  place-items: center;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: rgba(255, 255, 255, 0.95);
+  position: relative;
+  overflow: hidden;
+}
+
+.summary-badge::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(120% 100% at 25% 20%, rgba(255, 255, 255, 0.22), transparent 60%);
+}
+
+.summary-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 5px;
+}
+
+.summary-year {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.summary-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.summary-status::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+.summary-status--dot::before {
+  background: #4ade80;
+  box-shadow: 0 0 8px rgba(74, 222, 128, 0.6);
+}
+
+.summary-status--academic::before {
+  background: #6ba9ff;
+  box-shadow: 0 0 8px rgba(107, 169, 255, 0.6);
+}
+
+.summary-title {
+  margin: 2px 0 0;
+  font-size: 1.18rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #fff;
+}
+
+.summary-type {
+  margin: 0;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(245, 213, 138, 0.78);
+}
+
+.summary-tagline {
+  margin: 2px 0 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.62);
+  /* clamp 3 lignes pour garder les cartes alignées */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.summary-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 6px;
+}
+
+.summary-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-width: 0;
+}
+
+.summary-tag {
+  padding: 4px 10px;
+  font-size: 0.72rem;
+  font-weight: 500;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  color: rgba(255, 255, 255, 0.72);
+  white-space: nowrap;
+}
+
+.summary-tag--more {
+  color: rgba(245, 213, 138, 0.85);
+  border-color: rgba(245, 213, 138, 0.25);
+  background: rgba(245, 213, 138, 0.06);
+}
+
+.summary-arrow {
+  flex: 0 0 auto;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.7);
+  transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease,
+    transform 0.25s ease;
+}
+
+.summary-arrow svg {
+  width: 15px;
+  height: 15px;
+}
+
+.summary-card:hover .summary-arrow {
+  background: rgba(245, 213, 138, 0.14);
+  border-color: rgba(245, 213, 138, 0.45);
+  color: #f5d58a;
+  transform: translateX(3px);
+}
+
+/* ----- Responsive -------------------------------------------- */
+@media (max-width: 560px) {
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .summary-all {
+    width: 100%;
+    justify-content: center;
+  }
+}

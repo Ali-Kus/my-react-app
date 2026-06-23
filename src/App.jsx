@@ -3,7 +3,7 @@ import "./App.css";
 import { useCallback, useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import IntroAnimation from "./components/IntroAnimation";
-import ProjectsSection from "./components/ProjectsSection";
+import ProjectsSummary from "./components/ProjectsSummary";
 import CursorFx from "./components/CursorFx";
 import TechBackdrop from "./components/TechBackdrop";
 import logoSvg from "./assets/logo.svg";
@@ -191,7 +191,7 @@ function App() {
               <section id="projects">
                 <span className="section-number" aria-hidden="true">02</span>
                 <h2>Projets</h2>
-                <ProjectsSection />
+                <ProjectsSummary />
               </section>
 
               <section id="about">
